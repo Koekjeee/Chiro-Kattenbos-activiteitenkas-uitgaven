@@ -68,7 +68,6 @@ document.addEventListener("DOMContentLoaded", function () {
               document.getElementById("filterGroep").value,
               document.getElementById("filterBetaald").value
             );
-            berekenGroepOverzicht();
           };
           actieCel.appendChild(knop);
 
@@ -85,7 +84,6 @@ document.addEventListener("DOMContentLoaded", function () {
                   document.getElementById("filterGroep").value,
                   document.getElementById("filterBetaald").value
                 );
-                berekenGroepOverzicht();
               }
             });
           };
@@ -137,51 +135,11 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("filterBetaald").addEventListener("change", function () {
     renderTabel(document.getElementById("filterGroep").value, this.value);
   });
-
-  function toonInstellingenVelden() {
-    const container = document.getElementById("instellingenVelden");
-    container.innerHTML = "";
-
-    alleGroepen.forEach(groep => {
-      const wrapper = document.createElement("div");
-      wrapper.style.marginBottom = "10px";
-      wrapper.style.backgroundColor = groepKleuren[groep] || "#f0f0f0";
-      wrapper.style.padding = "10px";
-      wrapper.style.borderRadius = "6px";
-
-      const label = document.createElement("h4");
-      label.textContent = groep;
-
-      const ledenInput = document.createElement("input");
-      ledenInput.type = "number";
-      ledenInput.placeholder = "Aantal leden";
-      ledenInput.id = `leden-${groep}`;
-      ledenInput.style.marginRight = "10px";
-
-      const bedragInput = document.createElement("input");
-      bedragInput.type = "number";
-      bedragInput.placeholder = "Max bedrag per lid (€)";
-      bedragInput.id = `maxbedrag-${groep}`;
-
-      wrapper.appendChild(label);
-      wrapper.appendChild(ledenInput);
-      wrapper.appendChild(bedragInput);
-      container.appendChild(wrapper);
-    });
-  }
-
-  function instellingenOpslaan() {
-    alleGroepen.forEach(groep => {
-      const leden = parseInt(document.getElementById(`leden-${groep}`).value);
-      const maxbedrag = parseFloat(document.getElementById(`maxbedrag-${groep}`).value);
-      if (!isNaN(leden) && !isNaN(maxbedrag)) {
-        firebase.database().ref("instellingen/" + groep).set({ leden, maxbedrag });
-      }
-    });
   }
 
   toonInstellingenVelden();
 });
+
 
 
 
