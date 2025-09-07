@@ -1,20 +1,20 @@
+/* base reset & layout */
 body {
   font-family: 'Segoe UI', sans-serif;
   margin: 0;
   padding: 20px;
   background-color: #f0f4f8;
 }
-
 #loginLogo {
   display: block;
   margin: 0 auto 10px;
   max-width: 150px;
 }
-
 h1, h2, h3 {
   color: #333;
 }
 
+/* forms & filters */
 form, .filter, #loginScherm {
   background: #fff;
   padding: 15px;
@@ -22,13 +22,11 @@ form, .filter, #loginScherm {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   margin-bottom: 20px;
 }
-
 label {
   display: block;
   margin-top: 10px;
   font-weight: bold;
 }
-
 input, select, button {
   width: 100%;
   padding: 8px;
@@ -37,15 +35,12 @@ input, select, button {
   border: 1px solid #ccc;
   box-sizing: border-box;
 }
-
 input[type="checkbox"] {
   width: auto;
   margin-right: 8px;
-  vertical-align: middle;
   transform: scale(1.2);
   cursor: pointer;
 }
-
 button {
   background-color: #28a745;
   color: white;
@@ -53,11 +48,11 @@ button {
   margin-top: 15px;
   cursor: pointer;
 }
-
 button:hover {
   background-color: #218838;
 }
 
+/* main table */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -66,18 +61,15 @@ table {
   overflow: hidden;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-
 th, td {
   padding: 10px;
   border-bottom: 1px solid #eee;
   text-align: left;
 }
-
 th {
   background-color: #007bff;
   color: white;
 }
-
 .verwijder {
   background-color: #dc3545;
   color: white;
@@ -86,73 +78,88 @@ th {
   border-radius: 4px;
   cursor: pointer;
 }
-
 .verwijder:hover {
   background-color: #c82333;
 }
-
 td.betaald-toggle {
   text-align: center;
 }
-
 td.betaald-toggle input[type="checkbox"] {
   transform: scale(1.3);
   margin: 0;
 }
 
-/* Samenvatting paneel */
+/* summary panel */
 #summaryPanel {
   background: #fff;
-  padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  margin: 15px 0;
-  font-size: 14px;
-  width: 100%;
-  max-width: 600px;
+  padding: 12px;
+  margin: 20px 0;
 }
-
 .highlight-btn {
-  display: inline-block;
-  background-color: #ffc107;
+  background: #ffc107;
   color: #333;
   border: none;
   border-radius: 4px;
-  padding: 4px 8px;
+  padding: 6px 12px;
+  font-weight: bold;
   cursor: pointer;
   animation: pulse 2s infinite;
-  font-weight: bold;
+  width: 100%;
+  text-align: left;
 }
-
 @keyframes pulse {
   0%   { box-shadow: 0 0 0 rgba(255,193,7,0.7); }
   70%  { box-shadow: 0 0 10px rgba(255,193,7,0); }
   100% { box-shadow: 0 0 0 rgba(255,193,7,0); }
 }
-
 #summaryContent {
   display: none;
   margin-top: 12px;
 }
 
-#summaryTable {
-  width: 100%;
-  border-collapse: collapse;
+/* card grid */
+.cards-container {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
-#summaryTable th,
-#summaryTable td {
-  padding: 6px 8px;
-  border: 1px solid #ddd;
-  text-align: center;
+/* individual card */
+.summary-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.summary-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #007bff;
+}
+.summary-card div {
+  font-size: 0.95rem;
+  display: flex;
+  justify-content: space-between;
+}
+.summary-card div span {
+  font-weight: bold;
 }
 
-#summaryTable th {
-  background: #f7f7f7;
-}
-
-#summaryTable td input {
-  width: 60px;
-  padding: 4px;
-  text-align: right;
+/* mobile tweaks */
+@media (max-width: 600px) {
+  #summaryPanel {
+    padding: 8px;
+  }
+  .highlight-btn {
+    font-size: 0.95rem;
+    padding: 8px;
+  }
+  .summary-card {
+    padding: 10px;
+  }
 }
