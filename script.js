@@ -16,7 +16,17 @@ document.addEventListener("DOMContentLoaded", function () {
     LEIDING: "#dddddd"
   };
 
-  // Toggle paneel en laad samenvatting
+  // Laad en bewaar instellingen in localStorage
+  function loadSettings() {
+    const s = localStorage.getItem("groepSettings");
+    return s ? JSON.parse(s) : {};
+  }
+
+  function saveSettings(settings) {
+    localStorage.setItem("groepSettings", JSON.stringify(settings));
+  }
+
+  // Toggle paneel en render samenvatting
   function setupSummaryToggle() {
     const btn = document.getElementById("toggleSummary");
     const content = document.getElementById("summaryContent");
@@ -29,13 +39,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Haal totalen op en render per groep met eigen kleur
+  // Renders de tabel met instellingen en budgetten
   function renderSamenvatting() {
-    const lijst = document.getElementById("groepSamenvatting");
-    lijst.innerHTML = "";
-
+    const tbody = document.getElementById("summaryBody");
+    tbody.innerHTML = "";
+    const settings = loadSettings();
     const totals = {};
-    alleGroepen.forEach(g => totals[g] = 0);
+    alleGroepen.forEach(g => (totals[g] = 0));
 
     firebase.database().ref("uitgaven").once("value", snapshot => {
       const data = snapshot.val() || {};
@@ -44,20 +54,77 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       alleGroepen.forEach(groep => {
-        const bedrag = totals[groep].toFixed(2);
-        const li = document.createElement("li");
-        li.textContent = groep;
-        li.style.backgroundColor = groepKleuren[groep] || "#fff";
+        const row = document.createElement("tr");
+        row.style.backgroundColor = groepKleuren[groep] || "#fff";
 
-        const span = document.createElement("span");
-        span.textContent = `€${bedrag}`;
-        li.appendChild(span);
+        // Instellingen ophalen
+        const leden = settings[groep]?.leden || "";
+        const perLid = settings[groep]?.perLid || "";
 
-        lijst.appendChild(li);
+        // Berekeningen
+        const totaalBudget = leden && perLid
+          ? (parseFloat(leden) * parseFloat(perLid))
+          : 0;
+        const uitgaven = totals[groep];
+        const beschikbaar = totaalBudget - uitgaven;
+
+        // Cell: Groep
+        const tdGroep = document.createElement("td");
+        tdGroep.textContent = groep;
+        row.appendChild(tdGroep);
+
+        // Cell: Aantal leden (input)
+        const tdLeden = document.createElement("td");
+        const inpLeden = document.createElement("input");
+        inpLeden.type = "number";
+        inpLeden.min = 0;
+        inpLeden.value = leden;
+        inpLeden.addEventListener("change", () => {
+          settings[groep] = settings[groep] || {};
+          settings[groep].leden = inpLeden.value;
+          saveSettings(settings);
+          renderSamenvatting();
+        });
+        tdLeden.appendChild(inpLeden);
+        row.appendChild(tdLeden);
+
+        // Cell: Budget per lid (input)
+        const tdPerLid = document.createElement("td");
+        const inpPerLid = document.createElement("input");
+        inpPerLid.type = "number";
+        inpPerLid.min = 0;
+        inpPerLid.step = "0.01";
+        inpPerLid.value = perLid;
+        inpPerLid.addEventListener("change", () => {
+          settings[groep] = settings[groep] || {};
+          settings[groep].perLid = inpPerLid.value;
+          saveSettings(settings);
+          renderSamenvatting();
+        });
+        tdPerLid.appendChild(inpPerLid);
+        row.appendChild(tdPerLid);
+
+        // Cell: Totaal budget
+        const tdTotaal = document.createElement("td");
+        tdTotaal.textContent = `€${totaalBudget.toFixed(2)}`;
+        row.appendChild(tdTotaal);
+
+        // Cell: Uitgaven
+        const tdUitgaven = document.createElement("td");
+        tdUitgaven.textContent = `€${uitgaven.toFixed(2)}`;
+        row.appendChild(tdUitgaven);
+
+        // Cell: Beschikbaar
+        const tdBeschikbaar = document.createElement("td");
+        tdBeschikbaar.textContent = `€${beschikbaar.toFixed(2)}`;
+        row.appendChild(tdBeschikbaar);
+
+        tbody.appendChild(row);
       });
     });
   }
 
+  // Login-check
   function controleerWachtwoord() {
     const invoer = document.getElementById("wachtwoord").value;
     const foutmelding = document.getElementById("loginFout");
@@ -75,10 +142,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   document.getElementById("loginKnop").addEventListener("click", controleerWachtwoord);
 
+  // Bestaande tabelfuncties…
   function renderTabel(filterGroep = "", filterBetaald = "") {
     const tbody = document.querySelector("#overzicht tbody");
     tbody.innerHTML = "";
-
     firebase.database().ref("uitgaven").once("value", snapshot => {
       const data = snapshot.val();
       const uitgaven = data ? Object.values(data) : [];
@@ -118,7 +185,6 @@ document.addEventListener("DOMContentLoaded", function () {
           const checkbox = document.createElement("input");
           checkbox.type = "checkbox";
           checkbox.checked = u.betaald;
-          checkbox.title = "Betaald aanvinken";
           checkbox.onchange = () => {
             firebase.database().ref("uitgaven/" + u.nummer).update({ betaald: checkbox.checked }, error => {
               if (!error) {
