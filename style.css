@@ -129,29 +129,8 @@ td.betaald-toggle input[type="checkbox"] {
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   margin-bottom: 15px;
-  font-size: 14px;
   max-width: 600px;
   width: 100%;
-}
-
-.highlight-btn {
-  display: inline-block;
-  background-color: #ffc107;
-  color: #333;
-  border: none;
-  border-radius: 4px;
-  padding: 4px 8px;
-  cursor: pointer;
-  animation: pulse 2s infinite;
-  font-weight: bold;
-  width: 100%;
-  text-align: left;
-}
-
-@keyframes pulse {
-  0%   { box-shadow: 0 0 0 rgba(255,193,7,0.7); }
-  70%  { box-shadow: 0 0 10px rgba(255,193,7,0); }
-  100% { box-shadow: 0 0 0 rgba(255,193,7,0); }
 }
 
 #summaryContent {
@@ -159,29 +138,9 @@ td.betaald-toggle input[type="checkbox"] {
   margin-top: 8px;
 }
 
-#summaryContent ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-#summaryContent li {
-  /* de kleur van elke groep komt via inline JS */
-  display: flex;
-  justify-content: space-between;
-  border-radius: 4px;
-  margin-bottom: 4px;
-  padding: 6px 10px;
-  font-weight: 500;
-  color: #333;
-}
-
-}
-
 #summaryTable {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 8px;
 }
 
 #summaryTable th,
@@ -201,5 +160,3 @@ td.betaald-toggle input[type="checkbox"] {
   padding: 4px;
   box-sizing: border-box;
 }
-
-
