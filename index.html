@@ -2,69 +2,111 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Chiro Kattenbos Uitgaven</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-  <h1>Uitgave toevoegen</h1>
 
-  <form id="uitgaveForm">
-    <label for="groep">Groep:</label>
-    <select id="groep" required>
-      <option value="">-- Kies een groep --</option>
-      <option>Ribbels</option>
-      <option>Speelclubs</option>
-      <option>Rakkers</option>
-      <option>Kwiks</option>
-      <option>Tippers</option>
-      <option>Toppers</option>
-      <option>Aspi</option>
-      <option>LEIDING</option>
-    </select>
+  <h1>Chiro Kattenbos – Uitgavenbeheer</h1>
 
-    <label for="bedrag">Bedrag (€):</label>
-    <input type="number" id="bedrag" required>
+  <div class="tabs">
+    <button onclick="toonTab('uitgaven')">Uitgavenlijst</button>
+    <button onclick="toonTab('statistieken')">Statistieken</button>
+  </div>
 
-    <label for="activiteit">Activiteit/Omschrijving:</label>
-    <input type="text" id="activiteit" required>
+  <div id="uitgavenTab">
+    <form id="uitgaveForm">
+      <label for="groep">Groep:</label>
+      <select id="groep" required>
+        <option value="">-- Kies een groep --</option>
+        <option>Ribbels</option>
+        <option>Speelclubs</option>
+        <option>Rakkers</option>
+        <option>Kwiks</option>
+        <option>Tippers</option>
+        <option>Toppers</option>
+        <option>Aspi</option>
+        <option>LEIDING</option>
+      </select>
 
-    <label for="datum">Datum:</label>
-    <input type="date" id="datum" required>
+      <label for="bedrag">Bedrag (€):</label>
+      <input type="number" id="bedrag" required>
 
-    <button type="submit">Toevoegen</button>
-  </form>
+      <label for="activiteit">Activiteit/Omschrijving:</label>
+      <input type="text" id="activiteit" required>
 
-  <hr>
+      <label for="datum">Datum:</label>
+      <input type="date" id="datum" required>
 
-  <h2>Overzicht van uitgaven</h2>
+      <button type="submit">Toevoegen</button>
+    </form>
 
-  <label for="filterGroep">Filter op groep:</label>
-  <select id="filterGroep">
-    <option value="">Alle groepen</option>
-    <option>Ribbels</option>
-    <option>Speelclubs</option>
-    <option>Rakkers</option>
-    <option>Kwiks</option>
-    <option>Tippers</option>
-    <option>Toppers</option>
-    <option>Aspi</option>
-    <option>LEIDING</option>
-  </select>
+    <div class="filter">
+      <label for="filterGroep">Filter op groep:</label>
+      <select id="filterGroep">
+        <option value="">Alle groepen</option>
+        <option>Ribbels</option>
+        <option>Speelclubs</option>
+        <option>Rakkers</option>
+        <option>Kwiks</option>
+        <option>Tippers</option>
+        <option>Toppers</option>
+        <option>Aspi</option>
+        <option>LEIDING</option>
+      </select>
+    </div>
 
-  <table id="overzicht">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Groep</th>
-        <th>Bedrag</th>
-        <th>Activiteit</th>
-        <th>Datum</th>
-        <th>Actie</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+    <div class="export">
+      <label for="pdfGroep">Export naar PDF:</label>
+      <select id="pdfGroep">
+        <option value="">Alle groepen</option>
+        <option>Ribbels</option>
+        <option>Speelclubs</option>
+        <option>Rakkers</option>
+        <option>Kwiks</option>
+        <option>Tippers</option>
+        <option>Toppers</option>
+        <option>Aspi</option>
+        <option>LEIDING</option>
+      </select>
+      <button onclick="exporteerPDF()">Download PDF</button>
+    </div>
+
+    <table id="overzicht">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Groep</th>
+          <th>Bedrag</th>
+          <th>Activiteit</th>
+          <th>Datum</th>
+          <th>Actie</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div id="statistiekenTab" style="display:none;">
+    <h2>Statistieken per groep</h2>
+    <table id="statsTabel">
+      <thead>
+        <tr>
+          <th>Groep</th>
+          <th>Totaal (€)</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+      <tfoot>
+        <tr>
+          <th>Totaal alle groepen</th>
+          <th id="totaalAlleGroepen">€0</th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 
   <script src="script.js"></script>
 </body>
