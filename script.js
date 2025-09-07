@@ -55,4 +55,63 @@ document.addEventListener("DOMContentLoaded", function () {
           knop.onclick = () => {
             if (confirm(`Weet je zeker dat je uitgave wilt verwijderen?`)) {
               firebase.database().ref("uitgaven/" + u.nummer).remove();
-              renderTabel(document.getElementById("filter
+              renderTabel(document.getElementById("filterGroep").value);
+            }
+          };
+          actieCel.appendChild(knop);
+        });
+    });
+  }
+
+  document.getElementById("uitgaveForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const groep = document.getElementById("groep").value.trim();
+    const rawBedrag = document.getElementById("bedrag").value.trim().replace(",", ".");
+    const bedrag = parseFloat(rawBedrag);
+    const activiteit = document.getElementById("activiteit").value.trim();
+    const datum = document.getElementById("datum").value;
+
+    if (!groep || isNaN(bedrag) || bedrag <= 0 || !activiteit || !datum) {
+      alert("Gelieve alle velden correct in te vullen.");
+      return;
+    }
+
+    const nieuweUitgave = {
+      nummer: Date.now(),
+      groep,
+      bedrag: bedrag.toFixed(2),
+      activiteit,
+      datum
+    };
+
+    firebase.database().ref("uitgaven/" + nieuweUitgave.nummer).set(nieuweUitgave, function (error) {
+      if (error) {
+        alert("Fout bij opslaan: " + error.message);
+      } else {
+        document.getElementById("uitgaveForm").reset();
+        renderTabel(document.getElementById("filterGroep").value);
+      }
+    });
+  });
+
+  document.getElementById("filterGroep").addEventListener("change", function () {
+    renderTabel(this.value);
+  });
+
+  document.getElementById("toonOverzicht").addEventListener("click", function () {
+    firebase.database().ref("uitgaven").once("value", snapshot => {
+      const data = snapshot.val();
+      const uitgaven = data ? Object.values(data) : [];
+
+      const totaalPerGroep = {};
+
+      uitgaven.forEach(u => {
+        const bedrag = parseFloat(u.bedrag);
+        if (!totaalPerGroep[u.groep]) {
+          totaalPerGroep[u.groep] = 0;
+        }
+        totaalPerGroep[u.groep] += bedrag;
+      });
+
+      const overzichtDiv = document
