@@ -14,10 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
     Aspi: "#ffd5cc",
     LEIDING: "#dddddd"
   };
-
   const storage = firebase.storage();
-  
-  
 
   // Toggle paneel en laad samenvatting
   function setupSummaryToggle() {
@@ -38,22 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const totals = {};
     alleGroepen.forEach(g => totals[g] = 0);
 
-// ... bestaand rijwerk
-const celActie = rij.insertCell(6);
-// knop “Verwijder” ...
-celActie.appendChild(knop);
-
-// BONUS: thumbnail tonen
-const celBon = rij.insertCell(7);
-if (u.bonUrl) {
-  const img = document.createElement("img");
-  img.src = u.bonUrl;
-  img.className = "thumbnail";
-  img.title = "Klik voor volledige bon";
-  img.onclick = () => window.open(u.bonUrl, "_blank");
-  celBon.appendChild(img);
-}
-    
     firebase.database().ref("uitgaven").once("value", snapshot => {
       const data = snapshot.val() || {};
       Object.values(data).forEach(u => {
@@ -73,7 +54,7 @@ if (u.bonUrl) {
     });
   }
 
-  // PDF-export setup met datum/tijd in de hoek
+  // PDF-export setup
   function setupPdfExport() {
     const btn = document.getElementById("exportPdfBtn");
     btn.addEventListener("click", async () => {
@@ -96,15 +77,15 @@ if (u.bonUrl) {
       y += 10;
 
       // groepen vullen
-      const totals = {};
-      alleGroepen.forEach(g => totals[g] = []);
+      const perGroep = {};
+      alleGroepen.forEach(g => perGroep[g] = []);
 
       const snap = await firebase.database().ref("uitgaven").once("value");
       const data = snap.val() || {};
-      Object.values(data).forEach(u => totals[u.groep].push(u));
+      Object.values(data).forEach(u => perGroep[u.groep].push(u));
 
       alleGroepen.forEach(groep => {
-        const items = totals[groep];
+        const items = perGroep[groep];
         if (!items.length) return;
 
         doc.setFontSize(14);
@@ -113,7 +94,8 @@ if (u.bonUrl) {
         doc.setFontSize(11);
 
         items.forEach(u => {
-          const regel = `${u.datum} – €${u.bedrag} – ${u.activiteit} ${u.betaald ? "(Betaald)" : "(Niet betaald)"}`;
+          const regel = `${u.datum} – €${u.bedrag} – ${u.activiteit} ` +
+                        (u.betaald ? "(Betaald)" : "(Niet betaald)");
           doc.text(regel, 25, y);
           y += 6;
           if (y > 280) {
@@ -146,15 +128,17 @@ if (u.bonUrl) {
   }
   document.getElementById("loginKnop").addEventListener("click", controleerWachtwoord);
 
-  // Overige functies (renderTabel, submit, filters) blijven ongewijzigd…
+  // Uitgaven in overzichtstabel
   function renderTabel(filterGroep = "", filterBetaald = "") {
     const tbody = document.querySelector("#overzicht tbody");
     tbody.innerHTML = "";
     firebase.database().ref("uitgaven").once("value", snap => {
       const data = snap.val() || {};
       Object.values(data)
-        .filter(u => (!filterGroep || u.groep === filterGroep)
-                   && (filterBetaald === "" || String(u.betaald) === filterBetaald))
+        .filter(u =>
+          (!filterGroep || u.groep === filterGroep) &&
+          (filterBetaald === "" || String(u.betaald) === filterBetaald)
+        )
         .sort((a, b) => b.nummer - a.nummer)
         .forEach(u => {
           const rij = tbody.insertRow();
@@ -187,10 +171,12 @@ if (u.bonUrl) {
           cb.onchange = () => {
             firebase.database().ref("uitgaven/" + u.nummer)
               .update({ betaald: cb.checked }, err => {
-                if (!err) renderTabel(
-                  document.getElementById("filterGroep").value,
-                  document.getElementById("filterBetaald").value
-                );
+                if (!err) {
+                  renderTabel(
+                    document.getElementById("filterGroep").value,
+                    document.getElementById("filterBetaald").value
+                  );
+                }
               });
           };
           c7.appendChild(cb);
@@ -198,8 +184,7 @@ if (u.bonUrl) {
     });
   }
 
-
-  // Uitgave toevoegen
+  // Nieuw uitgave toevoegen
   document.getElementById("uitgaveForm").addEventListener("submit", e => {
     e.preventDefault();
     const g = document.getElementById("groep").value;
@@ -211,7 +196,14 @@ if (u.bonUrl) {
       return alert("Gelieve alle velden correct in te vullen.");
     }
     const id = Date.now();
-    const obj = { nummer: id, groep: g, bedrag: b.toFixed(2), activiteit: a, datum: d, betaald: p };
+    const obj = {
+      nummer: id,
+      groep: g,
+      bedrag: b.toFixed(2),
+      activiteit: a,
+      datum: d,
+      betaald: p
+    };
     firebase.database().ref("uitgaven/" + id).set(obj, err => {
       if (!err) {
         document.getElementById("uitgaveForm").reset();
@@ -221,7 +213,7 @@ if (u.bonUrl) {
         );
       }
     });
-  });  // <-- sluit hier je submit-handler af
+  });  // ← Méér dan hier niks missen!
 
   // Filters
   document.getElementById("filterGroep")
@@ -234,10 +226,4 @@ if (u.bonUrl) {
       renderTabel(document.getElementById("filterGroep").value, e.target.value)
     );
 
-});  // <-- sluit hier je DOMContentLoaded callback af
-
-
-
-
-
-
+});  // sluit DOMContentLoaded af
