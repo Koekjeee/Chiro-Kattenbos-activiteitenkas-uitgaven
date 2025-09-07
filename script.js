@@ -9,11 +9,12 @@ const groepKleuren = {
   LEIDING: "#dddddd"
 };
 
+// Uitgaven ophalen en weergeven
 function renderTabel(filter = "") {
   const tbody = document.querySelector("#overzicht tbody");
   tbody.innerHTML = "";
 
-  db.ref("uitgaven").once("value", snapshot => {
+  firebase.database().ref("uitgaven").once("value", snapshot => {
     const data = snapshot.val();
     const uitgaven = data ? Object.values(data) : [];
 
@@ -35,7 +36,7 @@ function renderTabel(filter = "") {
         knop.className = "verwijder";
         knop.onclick = () => {
           if (confirm(`Weet je zeker dat je uitgave wilt verwijderen?`)) {
-            db.ref("uitgaven/" + u.nummer).remove();
+            firebase.database().ref("uitgaven/" + u.nummer).remove();
             renderTabel(document.getElementById("filterGroep").value);
           }
         };
@@ -44,6 +45,7 @@ function renderTabel(filter = "") {
   });
 }
 
+// Uitgave toevoegen
 document.getElementById("uitgaveForm").addEventListener("submit", function(e) {
   e.preventDefault();
 
@@ -66,13 +68,20 @@ document.getElementById("uitgaveForm").addEventListener("submit", function(e) {
     datum
   };
 
-  db.ref("uitgaven/" + nieuweUitgave.nummer).set(nieuweUitgave);
-  document.getElementById("uitgaveForm").reset();
-  renderTabel(document.getElementById("filterGroep").value);
+  firebase.database().ref("uitgaven/" + nieuweUitgave.nummer).set(nieuweUitgave, function(error) {
+    if (error) {
+      alert("Fout bij opslaan: " + error.message);
+    } else {
+      document.getElementById("uitgaveForm").reset();
+      renderTabel(document.getElementById("filterGroep").value);
+    }
+  });
 });
 
+// Filter op groep
 document.getElementById("filterGroep").addEventListener("change", function() {
   renderTabel(this.value);
 });
 
+// Initiale weergave
 renderTabel();
