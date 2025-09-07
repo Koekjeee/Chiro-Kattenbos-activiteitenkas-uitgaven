@@ -1,3 +1,7 @@
+const alleGroepen = [
+  "Ribbels", "Speelclubs", "Rakkers", "Kwiks",
+  "Tippers", "Toppers", "Aspi", "LEIDING"
+];
 document.addEventListener("DOMContentLoaded", function () {
   const correctWachtwoord = "chiro2025";
 
@@ -112,3 +116,4 @@ document.addEventListener("DOMContentLoaded", function () {
     Promise.all([
       firebase.database().ref("uitgaven").once("value"),
       firebase.database().ref("
+
