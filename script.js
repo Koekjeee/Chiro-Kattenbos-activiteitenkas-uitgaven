@@ -211,23 +211,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (!isNaN(leden) && !isNaN(maxPerLid)) {
         const maxToegestaan = leden * maxPerLid;
-        const totaal = parseFloat(totaalCell.textContent.replace("€", ""));
-        maxCell.textContent = `€${maxToegestaan.toFixed(2)}`;
+      const totaal = parseFloat(totaalCell.textContent.replace("€", ""));
+      maxCell.textContent = `€${maxToegestaan.toFixed(2)}`;
 
-        if (totaal >= maxToegestaan) {
-          totaalCell.style.color = "red";
-        } else if (totaal >= maxToegestaan * 0.75) {
-          totaalCell.style.color = "orange";
-        } else {
-          totaalCell.style.color = "green";
-        }
-
-        totaalCell.style.fontWeight = "bold";
+      if (totaal >= maxToegestaan) {
+        totaalCell.style.color = "red";
+      } else if (totaal >= maxToegestaan * 0.75) {
+        totaalCell.style.color = "orange";
       } else {
-        maxCell.textContent = "-";
-        totaalCell.style.color = "black";
-        totaalCell.style.fontWeight = "normal";
+        totaalCell.style.color = "green";
       }
-    });
-  }
+
+      totaalCell.style.fontWeight = "bold";
+    } else {
+      maxCell.textContent = "-";
+      totaalCell.style.color = "black";
+      totaalCell.style.fontWeight = "normal";
+    }
+  });
+} // sluit updateOverzicht()
 }); // sluit DOMContentLoaded()
+
