@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "Ribbels", "Speelclubs", "Rakkers", "Kwiks",
     "Tippers", "Toppers", "Aspi", "LEIDING"
   ];
+
   const groepKleuren = {
     Ribbels: "#cce5ff",
     Speelclubs: "#ffe5cc",
@@ -15,10 +16,11 @@ document.addEventListener("DOMContentLoaded", function () {
     LEIDING: "#dddddd"
   };
 
-  // Toggle summary panel
+  // Toggle paneel en laad samenvatting
   function setupSummaryToggle() {
     const btn = document.getElementById("toggleSummary");
     const content = document.getElementById("summaryContent");
+
     btn.addEventListener("click", () => {
       const open = content.style.display === "block";
       content.style.display = open ? "none" : "block";
@@ -27,10 +29,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Render eenvoudige samenvattingstabel
+  // Haal totalen op en render per groep
   function renderSamenvatting() {
-    const tbody = document.getElementById("summaryBody");
-    tbody.innerHTML = "";
+    const lijst = document.getElementById("groepSamenvatting");
+    lijst.innerHTML = "";
 
     const totals = {};
     alleGroepen.forEach(g => totals[g] = 0);
@@ -42,40 +44,34 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       alleGroepen.forEach(groep => {
-        const rij = document.createElement("tr");
-        rij.style.backgroundColor = groepKleuren[groep] || "#fff";
-
-        const tdGroep = document.createElement("td");
-        tdGroep.textContent = groep;
-        rij.appendChild(tdGroep);
-
-        const tdBedrag = document.createElement("td");
-        tdBedrag.textContent = `€${totals[groep].toFixed(2)}`;
-        rij.appendChild(tdBedrag);
-
-        tbody.appendChild(rij);
+        const bedrag = totals[groep].toFixed(2);
+        const li = document.createElement("li");
+        li.textContent = groep;
+        const span = document.createElement("span");
+        span.textContent = `€${bedrag}`;
+        li.appendChild(span);
+        lijst.appendChild(li);
       });
     });
   }
 
-  // Login logic
   function controleerWachtwoord() {
     const invoer = document.getElementById("wachtwoord").value;
-    const fout = document.getElementById("loginFout");
+    const foutmelding = document.getElementById("loginFout");
+
     if (invoer === correctWachtwoord) {
       document.getElementById("loginScherm").style.display = "none";
       document.getElementById("appInhoud").style.display = "block";
-      fout.textContent = "";
+      foutmelding.textContent = "";
       setupSummaryToggle();
       renderTabel();
     } else {
-      fout.textContent = "Wachtwoord is onjuist.";
+      foutmelding.textContent = "Wachtwoord is onjuist.";
     }
   }
 
   document.getElementById("loginKnop").addEventListener("click", controleerWachtwoord);
 
-  // Tabel met uitgaven
   function renderTabel(filterGroep = "", filterBetaald = "") {
     const tbody = document.querySelector("#overzicht tbody");
     tbody.innerHTML = "";
@@ -121,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
           checkbox.checked = u.betaald;
           checkbox.title = "Betaald aanvinken";
           checkbox.onchange = () => {
-            firebase.database().ref("uitgaven/" + u.nummer).update({ betaald: checkbox.checked }, function (error) {
+            firebase.database().ref("uitgaven/" + u.nummer).update({ betaald: checkbox.checked }, error => {
               if (!error) {
                 renderTabel(
                   document.getElementById("filterGroep").value,
@@ -135,12 +131,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Toevoegen van nieuwe uitgave
   document.getElementById("uitgaveForm").addEventListener("submit", function (e) {
     e.preventDefault();
 
     const groep = document.getElementById("groep").value;
-    const bedrag = parseFloat(document.getElementById("bedrag").value.replace(",", ".")) || 0;
+    const bedrag = parseFloat(document.getElementById("bedrag").value.replace(",", "."));
     const activiteit = document.getElementById("activiteit").value;
     const datum = document.getElementById("datum").value;
     const betaald = document.getElementById("betaald").checked;
@@ -160,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function () {
       betaald
     };
 
-    firebase.database().ref("uitgaven/" + nummer).set(nieuweUitgave, function (error) {
+    firebase.database().ref("uitgaven/" + nummer).set(nieuweUitgave, error => {
       if (!error) {
         document.getElementById("uitgaveForm").reset();
         renderTabel(
@@ -171,7 +166,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // Filters
   document.getElementById("filterGroep").addEventListener("change", function () {
     renderTabel(this.value, document.getElementById("filterBetaald").value);
   });
