@@ -133,4 +133,4 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("filterBetaald").addEventListener("change", function () {
     renderTabel(document.getElementById("filterGroep").value, this.value);
   });
-}); // ✅ sluit DOMContentLoaded
+}); // ✅ correct afgesloten
