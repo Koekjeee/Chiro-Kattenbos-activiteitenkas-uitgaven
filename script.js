@@ -70,6 +70,22 @@ document.addEventListener("DOMContentLoaded", function () {
             );
           };
           actieCel.appendChild(knop);
+
+          const wijzigCel = rij.insertCell(8);
+          const wijzigKnop = document.createElement("button");
+          wijzigKnop.textContent = u.betaald ? "Markeer als niet betaald" : "Markeer als betaald";
+          wijzigKnop.className = "wijzigBetaald";
+          wijzigKnop.onclick = () => {
+            firebase.database().ref("uitgaven/" + u.nummer).update({ betaald: !u.betaald }, function (error) {
+              if (!error) {
+                renderTabel(
+                  document.getElementById("filterGroep").value,
+                  document.getElementById("filterBetaald").value
+                );
+              }
+            });
+          };
+          wijzigCel.appendChild(wijzigKnop);
         });
     });
   }
@@ -79,23 +95,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const groep = document.getElementById("groep").value;
     const bedrag = parseFloat(document.getElementById("bedrag").value.replace(",", "."));
-    const activiteit = document.getElementById("activiteit").value;
-    const datum = document.getElementById("datum").value;
-    const betaald = document.getElementById("betaald").checked;
-
-    if (!groep || isNaN(bedrag) || !activiteit || !datum) {
-      alert("Gelieve alle velden correct in te vullen.");
-      return;
-    }
-
-    const nummer = Date.now();
-    const nieuweUitgave = {
-      nummer,
-      groep,
-      bedrag: bedrag.toFixed(2),
-      activiteit,
-      datum,
-      betaald
-    };
-
-    firebase.database().ref("uitgaven
+   
