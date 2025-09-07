@@ -98,52 +98,50 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("filterGroep").addEventListener("change", function () {
     renderTabel(this.value);
   });
-let overzichtZichtbaar = false;
 
-document.getElementById("toonOverzicht").addEventListener("click", function () {
-  const overzichtDiv = document.getElementById("groepOverzicht");
+  let overzichtZichtbaar = false;
 
-  if (overzichtZichtbaar) {
-    overzichtDiv.innerHTML = "";
-    overzichtZichtbaar = false;
-    return;
-  }
+  document.getElementById("toonOverzicht").addEventListener("click", function () {
+    const overzichtDiv = document.getElementById("groepOverzicht");
 
-  firebase.database().ref("uitgaven").once("value", snapshot => {
-    const data = snapshot.val();
-    const uitgaven = data ? Object.values(data) : [];
+    if (overzichtZichtbaar) {
+      overzichtDiv.innerHTML = "";
+      overzichtZichtbaar = false;
+      return;
+    }
 
-    const totaalPerGroep = {};
+    firebase.database().ref("uitgaven").once("value", snapshot => {
+      const data = snapshot.val();
+      const uitgaven = data ? Object.values(data) : [];
 
-    uitgaven.forEach(u => {
-      const bedrag = parseFloat(u.bedrag);
-      if (!totaalPerGroep[u.groep]) {
-        totaalPerGroep[u.groep] = 0;
-      }
-      totaalPerGroep[u.groep] += bedrag;
+      const totaalPerGroep = {};
+
+      uitgaven.forEach(u => {
+        const bedrag = parseFloat(u.bedrag);
+        if (!totaalPerGroep[u.groep]) {
+          totaalPerGroep[u.groep] = 0;
+        }
+        totaalPerGroep[u.groep] += bedrag;
+      });
+
+      overzichtDiv.innerHTML = "<h3>Overzicht per groep</h3>";
+
+      const tabel = document.createElement("table");
+      tabel.className = "groepTabel";
+
+      const header = tabel.insertRow();
+      header.innerHTML = "<th>Groep</th><th>Totaal (€)</th>";
+      header.className = "groepHeader";
+
+      Object.entries(totaalPerGroep).forEach(([groep, totaal]) => {
+        const rij = tabel.insertRow();
+        rij.style.backgroundColor = groepKleuren[groep] || "#f9f9f9";
+        rij.insertCell(0).textContent = groep;
+        rij.insertCell(1).textContent = `€${totaal.toFixed(2)}`;
+      });
+
+      overzichtDiv.appendChild(tabel);
+      overzichtZichtbaar = true;
     });
-
-    overzichtDiv.innerHTML = "<h3>Overzicht per groep</h3>";
-
-    const tabel = document.createElement("table");
-    tabel.className = "groepTabel";
-
-    const header = tabel.insertRow();
-    header.innerHTML = "<th>Groep</th><th>Totaal (€)</th>";
-    header.className = "groepHeader";
-
-    Object.entries(totaalPerGroep).forEach(([groep, totaal]) => {
-      const rij = tabel.insertRow();
-      rij.style.backgroundColor = groepKleuren[groep] || "#f9f9f9";
-      rij.insertCell(0).textContent = groep;
-      rij.insertCell(1).textContent = `€${totaal.toFixed(2)}`;
-    });
-
-    overzichtDiv.appendChild(tabel);
-    overzichtZichtbaar = true;
   });
 });
-  
-
-}); // ← sluit de DOMContentLoaded correct af!
-
