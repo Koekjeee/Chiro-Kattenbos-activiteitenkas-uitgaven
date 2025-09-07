@@ -38,6 +38,22 @@ document.addEventListener("DOMContentLoaded", function () {
     const totals = {};
     alleGroepen.forEach(g => totals[g] = 0);
 
+// ... bestaand rijwerk
+const celActie = rij.insertCell(6);
+// knop “Verwijder” ...
+celActie.appendChild(knop);
+
+// BONUS: thumbnail tonen
+const celBon = rij.insertCell(7);
+if (u.bonUrl) {
+  const img = document.createElement("img");
+  img.src = u.bonUrl;
+  img.className = "thumbnail";
+  img.title = "Klik voor volledige bon";
+  img.onclick = () => window.open(u.bonUrl, "_blank");
+  celBon.appendChild(img);
+}
+    
     firebase.database().ref("uitgaven").once("value", snapshot => {
       const data = snapshot.val() || {};
       Object.values(data).forEach(u => {
@@ -244,6 +260,7 @@ document.getElementById("uitgaveForm").addEventListener("submit", async function
   document.getElementById("filterBetaald")
     .addEventListener("change", e => renderTabel(document.getElementById("filterGroep").value, e.target.value));
 });
+
 
 
 
