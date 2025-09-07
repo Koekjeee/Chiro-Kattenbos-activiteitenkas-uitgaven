@@ -17,17 +17,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   window.controleerWachtwoord = controleerWachtwoord;
 
-  const groepKleuren = {
-    Ribbels: "#cce5ff",
-    Speelclubs: "#ffe5cc",
-    Rakkers: "#e5ffcc",
-    Kwiks: "#ffccf2",
-    Tippers: "#d5ccff",
-    Toppers: "#ccffd5",
-    Aspi: "#ffd5cc",
-    LEIDING: "#dddddd"
-  };
-
   function renderTabel(filter = "") {
     const tbody = document.querySelector("#overzicht tbody");
     tbody.innerHTML = "";
@@ -41,7 +30,6 @@ document.addEventListener("DOMContentLoaded", function () {
         .sort((a, b) => b.nummer - a.nummer)
         .forEach(u => {
           const rij = tbody.insertRow();
-          rij.style.backgroundColor = groepKleuren[u.groep] || "#fff";
           rij.insertCell(0).textContent = u.nummer;
           rij.insertCell(1).textContent = u.groep;
           rij.insertCell(2).textContent = `€${u.bedrag}`;
@@ -64,13 +52,12 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("uitgaveForm").addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const groep = document.getElementById("groep").value.trim();
-    const rawBedrag = document.getElementById("bedrag").value.trim().replace(",", ".");
-    const bedrag = parseFloat(rawBedrag);
-    const activiteit = document.getElementById("activiteit").value.trim();
+    const groep = document.getElementById("groep").value;
+    const bedrag = parseFloat(document.getElementById("bedrag").value.replace(",", "."));
+    const activiteit = document.getElementById("activiteit").value;
     const datum = document.getElementById("datum").value;
 
-    if (!groep || isNaN(bedrag) || bedrag <= 0 || !activiteit || !datum) {
+    if (!groep || isNaN(bedrag) || !activiteit || !datum) {
       alert("Gelieve alle velden correct in te vullen.");
       return;
     }
@@ -126,78 +113,4 @@ document.addEventListener("DOMContentLoaded", function () {
       Object.keys(totaalPerGroep).forEach(groep => {
         const huidige = instellingenData[groep] || { leden: "", maxPerLid: "" };
 
-        const container = document.createElement("div");
-        container.innerHTML = `
-          <strong>${groep}</strong><br>
-          Aantal leden: <input type="number" min="1" id="leden-${groep}" value="${huidige.leden}" style="width:60px">
-          Max €/lid: <input type="number" min="0" step="0.01" id="max-${groep}" value="${huidige.maxPerLid}" style="width:80px">
-        `;
-        instellingenDiv.appendChild(container);
-
-        ["leden", "max"].forEach(type => {
-          const input = document.getElementById(`${type}-${groep}`);
-          input.addEventListener("input", () => {
-            const leden = parseInt(document.getElementById(`leden-${groep}`).value);
-            const maxPerLid = parseFloat(document.getElementById(`max-${groep}`).value);
-
-            firebase.database().ref("instellingen/" + groep).set({
-              leden: isNaN(leden) ? 0 : leden,
-              maxPerLid: isNaN(maxPerLid) ? 0 : maxPerLid
-            });
-
-            updateOverzicht();
-          });
-        });
-      });
-
-      overzichtDiv.innerHTML = "<h3>Overzicht per groep</h3>";
-      const tabel = document.createElement("table");
-      tabel.className = "groepTabel";
-
-      const header = tabel.insertRow();
-      header.innerHTML = "<th>Groep</th><th>Totaal (€)</th><th>Max toegestaan</th>";
-      header.className = "groepHeader";
-
-      Object.entries(totaalPerGroep).forEach(([groep, totaal]) => {
-        const rij = tabel.insertRow();
-        rij.style.backgroundColor = groepKleuren[groep] || "#f9f9f9";
-        rij.setAttribute("data-groep", groep);
-        rij.insertCell(0).textContent = groep;
-        rij.insertCell(1).textContent = `€${totaal.toFixed(2)}`;
-        rij.insertCell(2).textContent = "-";
-      });
-
-      overzichtDiv.appendChild(tabel);
-      overzichtZichtbaar = true;
-      updateOverzicht();
-    });
-  });
-
-  function updateOverzicht() {
-    const rows = document.querySelectorAll(".groepTabel tr[data-groep]");
-    rows.forEach(row => {
-      const groep = row.getAttribute("data-groep");
-      const leden = parseInt(document.getElementById(`leden-${groep}`).value);
-      const maxPerLid = parseFloat(document.getElementById(`max-${groep}`).value);
-      const totaalCell = row.cells[1];
-      const maxCell = row.cells[2];
-
-      if (!isNaN(leden) && !isNaN(maxPerLid)) {
-        const maxToegestaan = leden * maxPerLid;
-        const totaal = parseFloat(totaalCell.textContent.replace("€", ""));
-        maxCell.textContent = `€${maxToegestaan.toFixed(2)}`;
-
-        if (totaal >= maxToegestaan) {
-          totaalCell.style.color = "red";
-          totaalCell.style.fontWeight = "bold";
-        } else if (totaal >= maxToegestaan * 0.9) {
-          totaalCell.style.color = "orange";
-          totaalCell.style.fontWeight = "bold";
-        } else {
-          totaalCell.style.color = "black";
-          totaalCell.style.fontWeight = "normal";
-        }
-      } else {
-        maxCell.textContent = "-";
-        totaalCell.style.color = "black";
-        totaalCell.style.fontWeight =
+       
