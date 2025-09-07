@@ -24,21 +24,18 @@
 </head>
 <body>
 
-<div id="loginScherm">
-  <h2>Inloggen</h2>
-  <p>Voer het wachtwoord in om toegang te krijgen:</p>
-  <input type="password" id="wachtwoord" placeholder="Wachtwoord">
-  <button onclick="controleerWachtwoord()">Inloggen</button>
-  <p id="loginFout" style="color:red;"></p>
-</div>
+  <!-- 🔐 Login -->
+  <div id="loginScherm">
+    <h2>Inloggen</h2>
+    <p>Voer het wachtwoord in om toegang te krijgen:</p>
+    <input type="password" id="wachtwoord" placeholder="Wachtwoord">
+    <button onclick="controleerWachtwoord()">Inloggen</button>
+    <p id="loginFout" style="color:red;"></p>
+  </div>
 
-<div id="appInhoud" style="display:none;">
-  <h1>Welkom bij Chiro Kattenbos</h1>
-</div>
-
-<script src="script.js"></script>
-</body>
-</html>
+  <!-- 📋 App -->
+  <div id="appInhoud" style="display:none;">
+    <h1>Chiro Kattenbos – Uitgavenbeheer</h1>
 
     <button id="toonOverzicht">Toon overzicht per groep</button>
 
@@ -105,7 +102,7 @@
     </table>
   </div>
 
+  <!-- 🔧 Script -->
   <script src="script.js"></script>
 </body>
 </html>
-
