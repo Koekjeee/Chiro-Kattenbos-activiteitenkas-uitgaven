@@ -35,15 +35,22 @@
   <!-- 📋 App -->
   <div id="appInhoud" style="display: none;">
     <h1>Chiro Kattenbos – Uitgavenbeheer</h1>
+
+    <!-- ✅ Overzichtsknop -->
     <button id="toonOverzicht">Toon overzicht per groep</button>
 
+    <!-- ✅ Overzichtstabel -->
+    <div id="groepOverzicht">
+      <!-- Hier komt het overzicht per groep -->
+    </div>
+
+    <!-- ✅ Instellingen per groep -->
     <div id="groepInstellingen">
       <h3>Instellingen per groep</h3>
       <div id="instellingenVelden"></div>
     </div>
 
-    <div id="groepOverzicht"></div>
-
+    <!-- ✅ Uitgaveformulier -->
     <form id="uitgaveForm">
       <label for="groep">Groep:</label>
       <select id="groep" required>
