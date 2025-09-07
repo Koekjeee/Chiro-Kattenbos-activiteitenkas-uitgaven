@@ -200,8 +200,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (totaal >= maxToegestaan) {
           totaalCell.style.color = "red";
           totaalCell.style.fontWeight = "bold";
-        } else if (totaal >= maxToegestaan * 0.9) {
+        } else if (totaal >= maxToegestaan * 0.75) {
           totaalCell.style.color = "orange";
-          totaalCell.style.fontWeight = "bold";
-        } else {
-          totaalCell
+          totaalCell.style
