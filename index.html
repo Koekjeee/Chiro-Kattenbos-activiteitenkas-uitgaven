@@ -2,14 +2,17 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chiro Kattenbos Uitgaven</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>Uitgave toevoegen</h1>
+
   <form id="uitgaveForm">
-    <label>Groep:</label>
-    <select id="groep">
+    <label for="groep">Groep:</label>
+    <select id="groep" required>
+      <option value="">-- Kies een groep --</option>
       <option>Ribbels</option>
       <option>Speelclubs</option>
       <option>Rakkers</option>
@@ -20,26 +23,49 @@
       <option>LEIDING</option>
     </select>
 
-    <label>Bedrag (€):</label>
-    <input type="number" id="bedrag">
+    <label for="bedrag">Bedrag (€):</label>
+    <input type="number" id="bedrag" required>
 
-    <label>Activiteit:</label>
-    <input type="text" id="activiteit">
+    <label for="activiteit">Activiteit/Omschrijving:</label>
+    <input type="text" id="activiteit" required>
 
-    <label>Datum:</label>
-    <input type="date" id="datum">
+    <label for="datum">Datum:</label>
+    <input type="date" id="datum" required>
 
     <button type="submit">Toevoegen</button>
   </form>
 
-  <h2>Overzicht</h2>
+  <hr>
+
+  <h2>Overzicht van uitgaven</h2>
+
+  <label for="filterGroep">Filter op groep:</label>
+  <select id="filterGroep">
+    <option value="">Alle groepen</option>
+    <option>Ribbels</option>
+    <option>Speelclubs</option>
+    <option>Rakkers</option>
+    <option>Kwiks</option>
+    <option>Tippers</option>
+    <option>Toppers</option>
+    <option>Aspi</option>
+    <option>LEIDING</option>
+  </select>
+
   <table id="overzicht">
     <thead>
       <tr>
-        <th>#</th><th>Groep</th><th>Bedrag</th><th>Activiteit</th><th>Datum</th>
+        <th>#</th>
+        <th>Groep</th>
+        <th>Bedrag</th>
+        <th>Activiteit</th>
+        <th>Datum</th>
+        <th>Actie</th>
       </tr>
     </thead>
-    <tbody></tbody>
+    <tbody>
+      <!-- Rijen worden hier dynamisch toegevoegd -->
+    </tbody>
   </table>
 
   <script src="script.js"></script>
