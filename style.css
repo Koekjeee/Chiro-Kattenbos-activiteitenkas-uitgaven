@@ -66,22 +66,22 @@ th {
   background-color: #c82333;
 }
 
-/* Overzichttabel */
+/* Compacte overzichtstabel */
 .groepTabel {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
-  font-size: 0.9em;
+  font-size: 0.8em;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   border-radius: 6px;
   overflow: hidden;
 }
 .groepTabel th, .groepTabel td {
   padding: 4px 8px;
-  font-size: 0.85em;
+  border-bottom: 1px solid #eee;
+  text-align: left;
 }
 .groepHeader {
   background-color: #007bff;
   color: white;
 }
-
