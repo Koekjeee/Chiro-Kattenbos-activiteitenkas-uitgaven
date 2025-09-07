@@ -5,6 +5,12 @@ body {
   background-color: #f0f4f8;
 }
 
+#loginLogo {
+  display: block;
+  margin: 0 auto 10px;
+  max-width: 150px;
+}
+
 h1, h2, h3 {
   color: #333;
 }
@@ -102,10 +108,10 @@ td.betaald-toggle input[type="checkbox"] {
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   margin: 15px 0;
   font-size: 14px;
-  width: 250px;
+  width: 100%;
+  max-width: 600px;
 }
 
-/* Highlight-knop */
 .highlight-btn {
   display: inline-block;
   background-color: #ffc107;
@@ -119,33 +125,34 @@ td.betaald-toggle input[type="checkbox"] {
 }
 
 @keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 rgba(255,193,7,0.7);
-  }
-  70% {
-    box-shadow: 0 0 10px rgba(255,193,7,0);
-  }
-  100% {
-    box-shadow: 0 0 0 rgba(255,193,7,0);
-  }
+  0%   { box-shadow: 0 0 0 rgba(255,193,7,0.7); }
+  70%  { box-shadow: 0 0 10px rgba(255,193,7,0); }
+  100% { box-shadow: 0 0 0 rgba(255,193,7,0); }
 }
 
 #summaryContent {
   display: none;
-  margin-top: 8px;
+  margin-top: 12px;
 }
 
-#summaryContent ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+#summaryTable {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-#summaryContent li {
+#summaryTable th,
+#summaryTable td {
   padding: 6px 8px;
-  margin-bottom: 4px;
-  border-radius: 4px;
-  display: flex;
-  justify-content: space-between;
-  color: #333;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+#summaryTable th {
+  background: #f7f7f7;
+}
+
+#summaryTable td input {
+  width: 60px;
+  padding: 4px;
+  text-align: right;
 }
