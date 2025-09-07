@@ -119,35 +119,36 @@ td.betaald-toggle input[type="checkbox"] {
   margin-top: 12px;
 }
 
-/* card grid */
-.cards-container {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+#summaryContent {
+  display: none;
+  margin-top: 12px;
 }
 
-/* individual card */
-.summary-card {
+#summaryTable {
+  width: 100%;
+  border-collapse: collapse;
   background: #fff;
   border-radius: 8px;
+  overflow: hidden;
   box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
 }
-.summary-card h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  color: #007bff;
+
+#summaryTable th,
+#summaryTable td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: center;
 }
-.summary-card div {
-  font-size: 0.95rem;
-  display: flex;
-  justify-content: space-between;
+
+#summaryTable th {
+  background-color: #007bff;
+  color: white;
 }
-.summary-card div span {
-  font-weight: bold;
+
+#summaryTable td input {
+  width: 60px;
+  padding: 4px;
+  text-align: right;
 }
 
 /* mobile tweaks */
@@ -163,3 +164,4 @@ td.betaald-toggle input[type="checkbox"] {
     padding: 10px;
   }
 }
+
