@@ -135,10 +135,25 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // ✅ Toegevoegd: overzicht per groep
- document.getElementById("toonOverzicht").addEventListener("click", function () {
+document.getElementById("toonOverzicht").addEventListener("click", function () {
   const overzichtDiv = document.getElementById("groepOverzicht");
   overzichtDiv.innerHTML = "<p style='color:red;'>Knop werkt — overzicht wordt geladen...</p>";
 });
+
+    overzichtDiv.innerHTML = "<h3>Overzicht per groep</h3>";
+    const tabel = document.createElement("table");
+    tabel.className = "groepTabel";
+
+    const header = tabel.insertRow();
+    header.innerHTML = "<th>Groep</th><th>Totaal (€)</th>";
+    header.className = "groepHeader";
+
+    alleGroepen.forEach(groep => {
+      const rij = tabel.insertRow();
+      rij.style.backgroundColor = groepKleuren[groep] || "#f9f9f9";
+      rij.insertCell(0).textContent = groep;
+      rij.insertCell(1).textContent = `€${totaalPerGroep[groep].toFixed(2)}`;
+    });
 
     overzichtDiv.appendChild(tabel);
   });
