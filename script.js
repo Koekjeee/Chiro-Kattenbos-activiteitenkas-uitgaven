@@ -12,12 +12,6 @@ const groepKleuren = {
   LEIDING: "#dddddd"
 };
 
-function toonTab(tab) {
-  document.getElementById("uitgavenTab").style.display = tab === "uitgaven" ? "block" : "none";
-  document.getElementById("statistiekenTab").style.display = tab === "statistieken" ? "block" : "none";
-  if (tab === "statistieken") renderStatistieken();
-}
-
 function renderTabel(filter = "") {
   const tbody = document.querySelector("#overzicht tbody");
   tbody.innerHTML = "";
@@ -52,6 +46,35 @@ function verwijderUitgave(nr) {
   renderTabel(document.getElementById("filterGroep").value);
 }
 
-function renderStatistieken() {
-  const stats = {};
-  uit
+document.getElementById("uitgaveForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const groep = document.getElementById("groep").value;
+  const bedrag = document.getElementById("bedrag").value;
+  const activiteit = document.getElementById("activiteit").value;
+  const datum = document.getElementById("datum").value;
+
+  if (!groep || !bedrag || !activiteit || !datum) {
+    alert("Gelieve alle velden in te vullen.");
+    return;
+  }
+
+  const nieuweUitgave = {
+    nummer: nummer++,
+    groep,
+    bedrag,
+    activiteit,
+    datum
+  };
+
+  uitgaven.push(nieuweUitgave);
+  localStorage.setItem("uitgaven", JSON.stringify(uitgaven));
+  renderTabel(document.getElementById("filterGroep").value);
+  document.getElementById("uitgaveForm").reset();
+});
+
+document.getElementById("filterGroep").addEventListener("change", function() {
+  renderTabel(this.value);
+});
+
+renderTabel();
