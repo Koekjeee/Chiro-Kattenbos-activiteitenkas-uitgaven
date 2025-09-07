@@ -74,12 +74,14 @@
         <input type="checkbox" id="betaald"> Betaald
       </label>
 
+      <!-- Bonnetje upload is optioneel -->
       <label for="bonnetje">Bonnetje:</label>
       <input type="file" id="bonnetje" accept="image/*">
 
       <button type="submit">Toevoegen</button>
     </form>
 
+    <!-- 🔍 Filters -->
     <div class="filter">
       <label for="filterGroep">Filter op groep:</label>
       <select id="filterGroep">
@@ -95,6 +97,16 @@
       </select>
     </div>
 
+    <div class="filter">
+      <label for="filterBetaald">Filter op betaald:</label>
+      <select id="filterBetaald">
+        <option value="">Alles</option>
+        <option value="true">Betaald</option>
+        <option value="false">Niet betaald</option>
+      </select>
+    </div>
+
+    <!-- 📊 Tabel -->
     <table id="overzicht">
       <thead>
         <tr>
