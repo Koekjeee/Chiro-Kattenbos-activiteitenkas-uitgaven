@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Haal totalen op en render per groep
+  // Haal totalen op en render per groep met kleur
   function renderSamenvatting() {
     const lijst = document.getElementById("groepSamenvatting");
     lijst.innerHTML = "";
@@ -46,6 +46,15 @@ document.addEventListener("DOMContentLoaded", function () {
       alleGroepen.forEach(groep => {
         const bedrag = totals[groep].toFixed(2);
         const li = document.createElement("li");
+        li.style.backgroundColor = groepKleuren[groep] || "#fff";
+        li.style.padding = "6px 10px";
+        li.style.marginBottom = "4px";
+        li.style.borderRadius = "4px";
+        li.style.display = "flex";
+        li.style.justifyContent = "space-between";
+        li.style.fontWeight = "500";
+        li.style.color = "#333";
+
         li.textContent = groep;
         const span = document.createElement("span");
         span.textContent = `€${bedrag}`;
