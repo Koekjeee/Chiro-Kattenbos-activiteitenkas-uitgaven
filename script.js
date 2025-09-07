@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       let y = 20;
       doc.setFontSize(16);
-      doc.text("Uitgaven per groep", 20, y);
+      doc.text("Uitgaven activiteitenkas per groep", 20, y);
       y += 10;
 
       // groepen vullen
@@ -205,3 +205,4 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("filterBetaald")
     .addEventListener("change", e => renderTabel(document.getElementById("filterGroep").value, e.target.value));
 });
+
