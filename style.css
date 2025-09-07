@@ -178,3 +178,28 @@ td.betaald-toggle input[type="checkbox"] {
 
 }
 
+#summaryTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+#summaryTable th,
+#summaryTable td {
+  padding: 6px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+#summaryTable th {
+  background-color: #007bff;
+  color: white;
+}
+
+#summaryTable input {
+  width: 60px;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+
