@@ -93,6 +93,7 @@
     <!-- 📊 Groepsoverzicht -->
     <div id="groepOverzicht" style="margin-top: 30px;">
       <h2>Overzicht per groep</h2>
+      <button id="refreshGroepOverzicht" style="margin-bottom: 10px;">🔄 Vernieuw overzicht</button>
       <table id="groepTabel">
         <thead>
           <tr>
@@ -127,16 +128,19 @@
     </table>
   </div>
 
-  <!-- ✅ Script wordt pas geladen na alle HTML -->
   <script src="script.js"></script>
   <script>
-    // Zorg dat de loginfunctie pas wordt aangeroepen als script.js geladen is
     document.getElementById("loginKnop").addEventListener("click", function () {
       if (typeof controleerWachtwoord === "function") {
         controleerWachtwoord();
       } else {
-        console.error("controleerWachtwoord is niet beschikbaar.");
         document.getElementById("loginFout").textContent = "Er is een probleem met het script.";
+      }
+    });
+
+    document.getElementById("refreshGroepOverzicht").addEventListener("click", function () {
+      if (typeof berekenGroepOverzicht === "function") {
+        berekenGroepOverzicht();
       }
     });
   </script>
