@@ -53,12 +53,23 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // PDF-export setup
+  // PDF-export setup met datum/tijd in de hoek
   function setupPdfExport() {
     const btn = document.getElementById("exportPdfBtn");
     btn.addEventListener("click", async () => {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
+
+      // datum/tijd stempel
+      const now = new Date();
+      const timestamp = now.toLocaleString("nl-NL", {
+        day: "2-digit", month: "2-digit", year: "numeric",
+        hour: "2-digit", minute: "2-digit", second: "2-digit"
+      });
+      const pageWidth = doc.internal.pageSize.getWidth();
+      doc.setFontSize(10);
+      doc.text(timestamp, pageWidth - 20, 10, { align: "right" });
+
       let y = 20;
       doc.setFontSize(16);
       doc.text("Uitgaven per groep", 20, y);
@@ -75,6 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
       alleGroepen.forEach(groep => {
         const items = totals[groep];
         if (!items.length) return;
+
         doc.setFontSize(14);
         doc.text(groep, 20, y);
         y += 8;
@@ -84,12 +96,16 @@ document.addEventListener("DOMContentLoaded", function () {
           const regel = `${u.datum} – €${u.bedrag} – ${u.activiteit} ${u.betaald ? "(Betaald)" : "(Niet betaald)"}`;
           doc.text(regel, 25, y);
           y += 6;
-          if (y > 280) { doc.addPage(); y = 20; }
+          if (y > 280) {
+            doc.addPage();
+            y = 20;
+          }
         });
+
         y += 8;
       });
 
-      doc.save("uitgaven_activiteitenkas_per_groep.pdf");
+      doc.save("uitgaven_per_groep.pdf");
     });
   }
 
@@ -189,5 +205,3 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("filterBetaald")
     .addEventListener("change", e => renderTabel(document.getElementById("filterGroep").value, e.target.value));
 });
-
-
