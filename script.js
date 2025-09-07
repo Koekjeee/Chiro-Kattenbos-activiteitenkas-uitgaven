@@ -134,11 +134,33 @@ document.addEventListener("DOMContentLoaded", function () {
     renderTabel(document.getElementById("filterGroep").value, this.value);
   });
 
-  // ✅ Toegevoegd: overzicht per groep
+// ✅ Toggle overzicht per groep
+let overzichtZichtbaar = false;
+
 document.getElementById("toonOverzicht").addEventListener("click", function () {
   const overzichtDiv = document.getElementById("groepOverzicht");
-  overzichtDiv.innerHTML = "<p style='color:red;'>Knop werkt — overzicht wordt geladen...</p>";
-});
+
+  if (overzichtZichtbaar) {
+    overzichtDiv.innerHTML = "";
+    overzichtZichtbaar = false;
+    return;
+  }
+
+  overzichtDiv.innerHTML = "<p>Overzicht wordt geladen...</p>";
+  overzichtZichtbaar = true;
+
+  firebase.database().ref("uitgaven").once("value", snapshot => {
+    const data = snapshot.val() || {};
+    const totaalPerGroep = {};
+
+    alleGroepen.forEach(groep => totaalPerGroep[groep] = 0);
+
+    Object.values(data).forEach(u => {
+      const bedrag = parseFloat(u.bedrag);
+      if (!isNaN(bedrag)) {
+        totaalPerGroep[u.groep] += bedrag;
+      }
+    });
 
     overzichtDiv.innerHTML = "<h3>Overzicht per groep</h3>";
     const tabel = document.createElement("table");
@@ -158,6 +180,45 @@ document.getElementById("toonOverzicht").addEventListener("click", function () {
     overzichtDiv.appendChild(tabel);
   });
 });
+
+// ✅ Herstel instellingen per groep
+function toonInstellingenVelden() {
+  const container = document.getElementById("instellingenVelden");
+  container.innerHTML = "";
+
+  alleGroepen.forEach(groep => {
+    const wrapper = document.createElement("div");
+    wrapper.style.marginBottom = "10px";
+    wrapper.style.backgroundColor = groepKleuren[groep] || "#f0f0f0";
+    wrapper.style.padding = "10px";
+    wrapper.style.borderRadius = "6px";
+
+    const label = document.createElement("h4");
+    label.textContent = groep;
+
+    const ledenInput = document.createElement("input");
+    ledenInput.type = "number";
+    ledenInput.placeholder = "Aantal leden";
+    ledenInput.id = `leden-${groep}`;
+    ledenInput.style.marginRight = "10px";
+
+    const bedragInput = document.createElement("input");
+    bedragInput.type = "number";
+    bedragInput.placeholder = "Max bedrag per lid (€)";
+    bedragInput.id = `maxbedrag-${groep}`;
+
+    wrapper.appendChild(label);
+    wrapper.appendChild(ledenInput);
+    wrapper.appendChild(bedragInput);
+    container.appendChild(wrapper);
+  });
+}
+
+toonInstellingenVelden();
+    overzichtDiv.appendChild(tabel);
+  });
+});
 }); // ✅ correct afgesloten
+
 
 
