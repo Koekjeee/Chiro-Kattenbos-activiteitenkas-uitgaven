@@ -3,8 +3,8 @@ body {
   padding: 20px;
   background-color: #f9f9f9;
 }
-form {
-  margin-bottom: 20px;
+form, select {
+  margin-bottom: 15px;
 }
 label {
   display: block;
@@ -21,12 +21,22 @@ button {
   background-color: green;
   color: white;
   border: none;
+  cursor: pointer;
 }
 table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 20px;
 }
 th, td {
   border: 1px solid #ccc;
   padding: 8px;
+  text-align: left;
+}
+button.verwijder {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
 }
