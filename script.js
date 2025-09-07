@@ -215,6 +215,20 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });  // ← Méér dan hier niks missen!
 
+  function setupThemeToggle() {
+  const knop = document.getElementById("toggleTheme");
+  const saved = localStorage.getItem("theme");
+  if (saved === "dark") document.body.classList.add("dark");
+
+  knop.addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+    const isDark = document.body.classList.contains("dark");
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  });
+}
+
+  setupThemeToggle();
+
   // Filters
   document.getElementById("filterGroep")
     .addEventListener("change", e =>
@@ -227,3 +241,4 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
 });  // sluit DOMContentLoaded af
+
