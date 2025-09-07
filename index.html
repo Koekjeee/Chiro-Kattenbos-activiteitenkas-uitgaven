@@ -28,7 +28,7 @@
     <h2>Inloggen</h2>
     <p>Voer het wachtwoord in om toegang te krijgen:</p>
     <input type="password" id="wachtwoord" placeholder="Wachtwoord" />
-    <button onclick="controleerWachtwoord()">Inloggen</button>
+    <button id="loginKnop">Inloggen</button>
     <p id="loginFout" style="color: red;"></p>
   </div>
 
@@ -127,6 +127,18 @@
     </table>
   </div>
 
-<script src="script.js"></script>
+  <!-- ✅ Script wordt pas geladen na alle HTML -->
+  <script src="script.js"></script>
+  <script>
+    // Zorg dat de loginfunctie pas wordt aangeroepen als script.js geladen is
+    document.getElementById("loginKnop").addEventListener("click", function () {
+      if (typeof controleerWachtwoord === "function") {
+        controleerWachtwoord();
+      } else {
+        console.error("controleerWachtwoord is niet beschikbaar.");
+        document.getElementById("loginFout").textContent = "Er is een probleem met het script.";
+      }
+    });
+  </script>
 </body>
 </html>
