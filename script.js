@@ -27,11 +27,12 @@ function renderTabel(filter = "") {
       rij.insertCell(3).textContent = u.activiteit;
       rij.insertCell(4).textContent = u.datum;
 
-      const verwijderCel = rij.insertCell(5);
+      const actieCel = rij.insertCell(5);
       const knop = document.createElement("button");
       knop.textContent = "Verwijder";
+      knop.className = "verwijder";
       knop.onclick = () => verwijderUitgave(u.nummer);
-      verwijderCel.appendChild(knop);
+      actieCel.appendChild(knop);
     });
 }
 
