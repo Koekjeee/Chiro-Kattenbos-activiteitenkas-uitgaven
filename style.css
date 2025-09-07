@@ -71,17 +71,20 @@ th {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
-  font-size: 0.8em;
+  font-size: 0.75em;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   border-radius: 6px;
   overflow: hidden;
+  table-layout: fixed;
 }
 .groepTabel th, .groepTabel td {
-  padding: 4px 8px;
+  padding: 4px 6px;
   border-bottom: 1px solid #eee;
   text-align: left;
+  word-wrap: break-word;
 }
 .groepHeader {
   background-color: #007bff;
   color: white;
+  font-size: 0.8em;
 }
