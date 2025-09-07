@@ -102,3 +102,25 @@ td.betaald-toggle input[type="checkbox"] {
 #groepTabel td {
   font-weight: bold;
 }
+
+#groepTabel td, #groepTabel th {
+  padding: 6px 8px;
+  font-size: 0.9em;
+  line-height: 1.2;
+}
+
+#groepTabel {
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+}
+
+#groepTabel th {
+  background-color: #444;
+  color: #fff;
+  font-weight: 600;
+}
+
+#groepTabel td {
+  font-weight: 500;
+}
+
