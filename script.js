@@ -136,7 +136,6 @@ document.addEventListener("DOMContentLoaded", function () {
       Object.entries(totaalPerGroep).forEach(([groep, totaal]) => {
         const rij = tabel.insertRow();
         rij.style.backgroundColor = groepKleuren[groep] || "#f9f9f9";
-        rij.style.fontSize = "0.85em";
         rij.insertCell(0).textContent = groep;
         rij.insertCell(1).textContent = `€${totaal.toFixed(2)}`;
       });
