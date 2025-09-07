@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Chiro Kattenbos – Uitgavenbeheer ACTIVITEITENKAS</title>
+  <title>Chiro Kattenbos – Uitgavenbeheer</title>
   <link rel="stylesheet" href="style.css">
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-storage-compat.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBQ7lu-1PDD28LWuW9vgHcELj2mlGzpE70",
@@ -73,10 +72,6 @@
       <label>
         <input type="checkbox" id="betaald"> Betaald
       </label>
-
-      <!-- Bonnetje upload is optioneel -->
-      <label for="bonnetje">Bonnetje:</label>
-      <input type="file" id="bonnetje" accept="image/*">
 
       <button type="submit">Toevoegen</button>
     </form>
