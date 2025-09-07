@@ -4,10 +4,10 @@ body {
   padding: 20px;
   background-color: #f0f4f8;
 }
-h1, h2 {
+h1, h2, h3 {
   color: #333;
 }
-form, .filter, #loginScherm {
+form, .filter, #loginScherm, #groepOverzicht {
   background: #fff;
   padding: 15px;
   border-radius: 8px;
