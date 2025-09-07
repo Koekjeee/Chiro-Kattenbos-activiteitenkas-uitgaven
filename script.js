@@ -5,21 +5,30 @@ document.addEventListener("DOMContentLoaded", function () {
     "Tippers", "Toppers", "Aspi", "LEIDING"
   ];
   const groepKleuren = {
-    Ribbels: "#cce5ff",
+    Ribbels:    "#cce5ff",
     Speelclubs: "#ffe5cc",
-    Rakkers: "#e5ffcc",
-    Kwiks: "#ffccf2",
-    Tippers: "#d5ccff",
-    Toppers: "#ccffd5",
-    Aspi: "#ffd5cc",
-    LEIDING: "#dddddd"
+    Rakkers:    "#e5ffcc",
+    Kwiks:      "#ffccf2",
+    Tippers:    "#d5ccff",
+    Toppers:    "#ccffd5",
+    Aspi:       "#ffd5cc",
+    LEIDING:    "#dddddd"
   };
-  const storage = firebase.storage();
 
-  // Toggle paneel en laad samenvatting
+  // LocalStorage voor leden & budget per lid
+  function loadSettings() {
+    const s = localStorage.getItem("groepSettings");
+    return s ? JSON.parse(s) : {};
+  }
+  function saveSettings(settings) {
+    localStorage.setItem("groepSettings", JSON.stringify(settings));
+  }
+
+  // Toggle van het samenvattingspaneel
   function setupSummaryToggle() {
-    const btn = document.getElementById("toggleSummary");
+    const btn     = document.getElementById("toggleSummary");
     const content = document.getElementById("summaryContent");
+
     btn.addEventListener("click", () => {
       const open = content.style.display === "block";
       content.style.display = open ? "none" : "block";
@@ -28,11 +37,12 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Render per-groep overzicht met kleur
+  // Render de uitgebreide samenvattingstabel
   function renderSamenvatting() {
-    const lijst = document.getElementById("groepSamenvatting");
-    lijst.innerHTML = "";
-    const totals = {};
+    const tbody    = document.getElementById("summaryBody");
+    tbody.innerHTML = "";
+    const settings = loadSettings();
+    const totals   = {};
     alleGroepen.forEach(g => totals[g] = 0);
 
     firebase.database().ref("uitgaven").once("value", snapshot => {
@@ -42,14 +52,60 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       alleGroepen.forEach(groep => {
-        const bedrag = totals[groep].toFixed(2);
-        const li = document.createElement("li");
-        li.style.backgroundColor = groepKleuren[groep] || "#fff";
-        li.textContent = groep;
-        const span = document.createElement("span");
-        span.textContent = `€${bedrag}`;
-        li.appendChild(span);
-        lijst.appendChild(li);
+        const row = document.createElement("tr");
+        row.style.backgroundColor = groepKleuren[groep] || "#fff";
+
+        // Groep
+        const tdGroep = document.createElement("td");
+        tdGroep.textContent = groep;
+        row.appendChild(tdGroep);
+
+        // Leden (input)
+        const tdLeden = document.createElement("td");
+        const inpLeden = document.createElement("input");
+        inpLeden.type  = "number";
+        inpLeden.min   = 0;
+        inpLeden.value = settings[groep]?.leden || "";
+        inpLeden.addEventListener("change", () => {
+          settings[groep] = settings[groep] || {};
+          settings[groep].leden = parseInt(inpLeden.value) || 0;
+          saveSettings(settings);
+          renderSamenvatting();
+        });
+        tdLeden.appendChild(inpLeden);
+        row.appendChild(tdLeden);
+
+        // Budget per lid (input)
+        const tdPerLid = document.createElement("td");
+        const inpPerLid = document.createElement("input");
+        inpPerLid.type  = "number";
+        inpPerLid.min   = 0;
+        inpPerLid.step  = "0.01";
+        inpPerLid.value = settings[groep]?.perLid || "";
+        inpPerLid.addEventListener("change", () => {
+          settings[groep] = settings[groep] || {};
+          settings[groep].perLid = parseFloat(inpPerLid.value) || 0;
+          saveSettings(settings);
+          renderSamenvatting();
+        });
+        tdPerLid.appendChild(inpPerLid);
+        row.appendChild(tdPerLid);
+
+        // Uitgaven
+        const tdUitgaven = document.createElement("td");
+        tdUitgaven.textContent = `€${totals[groep].toFixed(2)}`;
+        row.appendChild(tdUitgaven);
+
+        // Beschikbaar
+        const ledenCount    = settings[groep]?.leden   || 0;
+        const perLidAmount = settings[groep]?.perLid   || 0;
+        const totaalBudget  = ledenCount * perLidAmount;
+        const beschikbaar   = totaalBudget - totals[groep];
+        const tdBeschikbaar = document.createElement("td");
+        tdBeschikbaar.textContent = `€${beschikbaar.toFixed(2)}`;
+        row.appendChild(tdBeschikbaar);
+
+        tbody.appendChild(row);
       });
     });
   }
@@ -61,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
 
-      // datum/tijd stempel
+      // Datum/tijd stempel rechtsboven
       const now = new Date();
       const timestamp = now.toLocaleString("nl-NL", {
         day: "2-digit", month: "2-digit", year: "numeric",
@@ -69,14 +125,15 @@ document.addEventListener("DOMContentLoaded", function () {
       });
       const pageWidth = doc.internal.pageSize.getWidth();
       doc.setFontSize(10);
-      doc.text(timestamp, pageWidth - 20, 10, { align: "right" });
+      doc.text(timestamp, pageWidth - 10, 10, { align: "right" });
 
+      // Titel
       let y = 20;
       doc.setFontSize(16);
       doc.text("Uitgaven activiteitenkas per groep", 20, y);
       y += 10;
 
-      // groepen vullen
+      // Groepen en hun uitgaven
       const perGroep = {};
       alleGroepen.forEach(g => perGroep[g] = []);
 
@@ -91,8 +148,8 @@ document.addEventListener("DOMContentLoaded", function () {
         doc.setFontSize(14);
         doc.text(groep, 20, y);
         y += 8;
-        doc.setFontSize(11);
 
+        doc.setFontSize(11);
         items.forEach(u => {
           const regel = `${u.datum} – €${u.bedrag} – ${u.activiteit} ` +
                         (u.betaald ? "(Betaald)" : "(Niet betaald)");
@@ -114,10 +171,10 @@ document.addEventListener("DOMContentLoaded", function () {
   // Login logic
   function controleerWachtwoord() {
     const invoer = document.getElementById("wachtwoord").value;
-    const fout = document.getElementById("loginFout");
+    const fout    = document.getElementById("loginFout");
     if (invoer === correctWachtwoord) {
       document.getElementById("loginScherm").style.display = "none";
-      document.getElementById("appInhoud").style.display = "block";
+      document.getElementById("appInhoud").style.display    = "block";
       fout.textContent = "";
       setupSummaryToggle();
       setupPdfExport();
@@ -126,23 +183,27 @@ document.addEventListener("DOMContentLoaded", function () {
       fout.textContent = "Wachtwoord is onjuist.";
     }
   }
-  document.getElementById("loginKnop").addEventListener("click", controleerWachtwoord);
+  document.getElementById("loginKnop")
+    .addEventListener("click", controleerWachtwoord);
 
-  // Uitgaven in overzichtstabel
+  // Hoofdoverzichtstabel met uitgaven
   function renderTabel(filterGroep = "", filterBetaald = "") {
     const tbody = document.querySelector("#overzicht tbody");
     tbody.innerHTML = "";
+
     firebase.database().ref("uitgaven").once("value", snap => {
       const data = snap.val() || {};
       Object.values(data)
-        .filter(u =>
-          (!filterGroep || u.groep === filterGroep) &&
-          (filterBetaald === "" || String(u.betaald) === filterBetaald)
-        )
+        .filter(u => {
+          const groepMatch   = !filterGroep   || u.groep === filterGroep;
+          const betaaldMatch = filterBetaald === ""  || String(u.betaald) === filterBetaald;
+          return groepMatch && betaaldMatch;
+        })
         .sort((a, b) => b.nummer - a.nummer)
         .forEach(u => {
           const rij = tbody.insertRow();
           rij.style.backgroundColor = groepKleuren[u.groep] || "#fff";
+
           rij.insertCell(0).textContent = u.nummer;
           rij.insertCell(1).textContent = u.groep;
           rij.insertCell(2).textContent = `€${u.bedrag}`;
@@ -166,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function () {
           const c7 = rij.insertCell(7);
           c7.className = "betaald-toggle";
           const cb = document.createElement("input");
-          cb.type = "checkbox";
+          cb.type    = "checkbox";
           cb.checked = u.betaald;
           cb.onchange = () => {
             firebase.database().ref("uitgaven/" + u.nummer)
@@ -184,27 +245,31 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Nieuw uitgave toevoegen
-  document.getElementById("uitgaveForm").addEventListener("submit", e => {
+  // Uitgave toevoegen
+  document.getElementById("uitgaveForm").addEventListener("submit", function (e) {
     e.preventDefault();
-    const g = document.getElementById("groep").value;
-    const b = parseFloat(document.getElementById("bedrag").value.replace(",", ".")) || 0;
-    const a = document.getElementById("activiteit").value;
-    const d = document.getElementById("datum").value;
-    const p = document.getElementById("betaald").checked;
-    if (!g || isNaN(b) || !a || !d) {
-      return alert("Gelieve alle velden correct in te vullen.");
+    const groep      = document.getElementById("groep").value;
+    const bedrag     = parseFloat(document.getElementById("bedrag").value.replace(",", ".")) || 0;
+    const activiteit = document.getElementById("activiteit").value;
+    const datum      = document.getElementById("datum").value;
+    const betaald    = document.getElementById("betaald").checked;
+
+    if (!groep || isNaN(bedrag) || !activiteit || !datum) {
+      alert("Gelieve alle velden correct in te vullen.");
+      return;
     }
-    const id = Date.now();
-    const obj = {
-      nummer: id,
-      groep: g,
-      bedrag: b.toFixed(2),
-      activiteit: a,
-      datum: d,
-      betaald: p
+
+    const nummer = Date.now();
+    const nieuweUitgave = {
+      nummer,
+      groep,
+      bedrag: bedrag.toFixed(2),
+      activiteit,
+      datum,
+      betaald
     };
-    firebase.database().ref("uitgaven/" + id).set(obj, err => {
+
+    firebase.database().ref("uitgaven/" + nummer).set(nieuweUitgave, err => {
       if (!err) {
         document.getElementById("uitgaveForm").reset();
         renderTabel(
@@ -213,17 +278,17 @@ document.addEventListener("DOMContentLoaded", function () {
         );
       }
     });
-  });  // ← Méér dan hier niks missen!
+  });
 
   // Filters
   document.getElementById("filterGroep")
-    .addEventListener("change", e =>
-      renderTabel(e.target.value, document.getElementById("filterBetaald").value)
-    );
+    .addEventListener("change", function () {
+      renderTabel(this.value, document.getElementById("filterBetaald").value);
+    });
 
   document.getElementById("filterBetaald")
-    .addEventListener("change", e =>
-      renderTabel(document.getElementById("filterGroep").value, e.target.value)
-    );
+    .addEventListener("change", function () {
+      renderTabel(document.getElementById("filterGroep").value, this.value);
+    });
 
-});  // sluit DOMContentLoaded af
+});  
