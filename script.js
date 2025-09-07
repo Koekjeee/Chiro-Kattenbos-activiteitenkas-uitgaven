@@ -16,28 +16,34 @@ function renderTabel(filter = "") {
   const tbody = document.querySelector("#overzicht tbody");
   tbody.innerHTML = "";
 
-  uitgaven
-    .filter(u => !filter || u.groep === filter)
-    .forEach(u => {
-      const rij = tbody.insertRow();
-      rij.style.backgroundColor = groepKleuren[u.groep] || "#fff";
-      rij.insertCell(0).textContent = u.nummer;
-      rij.insertCell(1).textContent = u.groep;
-      rij.insertCell(2).textContent = `€${u.bedrag}`;
-      rij.insertCell(3).textContent = u.activiteit;
-      rij.insertCell(4).textContent = u.datum;
+  db.ref("uitgaven").once("value", snapshot => {
+    const data = snapshot.val();
+    const uitgaven = data ? Object.values(data) : [];
 
-      const actieCel = rij.insertCell(5);
-      const knop = document.createElement("button");
-      knop.textContent = "Verwijder";
-      knop.className = "verwijder";
-      knop.onclick = () => {
-        if (confirm(`Weet je zeker dat je uitgave #${u.nummer} van ${u.groep} wilt verwijderen?`)) {
-          verwijderUitgave(u.nummer);
-        }
-      };
-      actieCel.appendChild(knop);
-    });
+    uitgaven
+      .filter(u => !filter || u.groep === filter)
+      .forEach(u => {
+        const rij = tbody.insertRow();
+        rij.style.backgroundColor = groepKleuren[u.groep] || "#fff";
+        rij.insertCell(0).textContent = u.nummer;
+        rij.insertCell(1).textContent = u.groep;
+        rij.insertCell(2).textContent = `€${u.bedrag}`;
+        rij.insertCell(3).textContent = u.activiteit;
+        rij.insertCell(4).textContent = u.datum;
+
+        const actieCel = rij.insertCell(5);
+        const knop = document.createElement("button");
+        knop.textContent = "Verwijder";
+        knop.className = "verwijder";
+        knop.onclick = () => {
+          if (confirm(`Weet je zeker dat je uitgave wilt verwijderen?`)) {
+            db.ref("uitgaven/" + u.nummer).remove();
+            renderTabel(document.getElementById("filterGroep").value);
+          }
+        };
+        actieCel.appendChild(knop);
+      });
+  });
 }
 
 function verwijderUitgave(nr) {
@@ -60,13 +66,15 @@ document.getElementById("uitgaveForm").addEventListener("submit", function(e) {
     return;
   }
 
-  const nieuweUitgave = {
-    nummer: nummer++,
-    groep,
-    bedrag: bedrag.toFixed(2),
-    activiteit,
-    datum
-  };
+const nieuweUitgave = {
+  nummer: Date.now(), // unieke ID
+  groep,
+  bedrag: bedrag.toFixed(2),
+  activiteit,
+  datum
+};
+
+db.ref("uitgaven/" + nieuweUitgave.nummer).set(nieuweUitgave);
 
   uitgaven.push(nieuweUitgave);
   localStorage.setItem("uitgaven", JSON.stringify(uitgaven));
@@ -79,3 +87,4 @@ document.getElementById("filterGroep").addEventListener("change", function() {
 });
 
 renderTabel();
+
