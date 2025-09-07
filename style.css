@@ -9,6 +9,34 @@ h1, h2, h3 {
   color: #333;
 }
 
+/* Zorg dat appInhoud relatieve positie heeft voor absolute child */
+#appInhoud {
+  position: relative;
+}
+
+/* PDF-export knop */
+.pdf-export-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.pdf-export-btn:hover {
+  background-color: #0069d9;
+}
+
+/* Rest van je styling */
 form, .filter, #loginScherm {
   background: #fff;
   padding: 15px;
@@ -121,9 +149,9 @@ td.betaald-toggle input[type="checkbox"] {
 }
 
 @keyframes pulse {
-  0% { box-shadow: 0 0 0 rgba(255,193,7, 0.7); }
-  70% { box-shadow: 0 0 10px rgba(255,193,7, 0); }
-  100% { box-shadow: 0 0 0 rgba(255,193,7, 0); }
+  0%   { box-shadow: 0 0 0 rgba(255,193,7,0.7); }
+  70%  { box-shadow: 0 0 10px rgba(255,193,7,0); }
+  100% { box-shadow: 0 0 0 rgba(255,193,7,0); }
 }
 
 #summaryContent {
@@ -138,18 +166,12 @@ td.betaald-toggle input[type="checkbox"] {
 }
 
 #summaryContent li {
-  padding: 6px 10px;
-  background-clip: padding-box;
+  /* de kleur van elke groep komt via inline JS */
   display: flex;
   justify-content: space-between;
   border-radius: 4px;
   margin-bottom: 4px;
+  padding: 6px 10px;
   font-weight: 500;
   color: #333;
-  width: 100%;
-  box-sizing: border-box;
 }
-  font-weight: 500;
-}
-
-
