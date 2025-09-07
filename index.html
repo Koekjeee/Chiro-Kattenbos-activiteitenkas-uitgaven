@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Chiro Kattenbos Uitgaven</title>
+  <title>Chiro Kattenbos – Uitgavenbeheer</title>
   <link rel="stylesheet" href="style.css">
 
   <!-- Firebase compat SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-database-compat.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBQ7lu-1PDD28LWuW9vgHcELj2mlGzpE70",
@@ -38,9 +38,18 @@
   <div id="appInhoud" style="display:none;">
     <h1>Chiro Kattenbos – Uitgavenbeheer</h1>
 
-<button id="toonOverzicht">Toon overzicht per groep</button>
-<div id="groepOverzicht"></div>
+    <button id="toonOverzicht">Toon overzicht per groep</button>
 
+    <!-- Instellingen per groep -->
+    <div id="groepInstellingen">
+      <h3>Instellingen per groep</h3>
+      <div id="instellingenVelden"></div>
+    </div>
+
+    <!-- Overzichtstabel per groep -->
+    <div id="groepOverzicht"></div>
+
+    <!-- Formulier om uitgaven toe te voegen -->
     <form id="uitgaveForm">
       <label for="groep">Groep:</label>
       <select id="groep" required>
@@ -67,6 +76,7 @@
       <button type="submit">Toevoegen</button>
     </form>
 
+    <!-- Filter op groep -->
     <div class="filter">
       <label for="filterGroep">Filter op groep:</label>
       <select id="filterGroep">
@@ -82,6 +92,7 @@
       </select>
     </div>
 
+    <!-- Tabel met uitgaven -->
     <table id="overzicht">
       <thead>
         <tr>
@@ -96,9 +107,7 @@
       <tbody></tbody>
     </table>
   </div>
-<script src="script.js"></script>
+
+  <script src="script.js"></script>
 </body>
 </html>
-
-
-
