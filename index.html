@@ -25,7 +25,6 @@
 </head>
 <body>
 
-  <!-- 🔐 Inlogscherm -->
   <div id="loginScherm">
     <h2>Inloggen</h2>
     <p>Voer het wachtwoord in om toegang te krijgen:</p>
@@ -34,23 +33,18 @@
     <p id="loginFout" style="color:red;"></p>
   </div>
 
-  <!-- 📋 App-inhoud -->
   <div id="appInhoud" style="display:none;">
     <h1>Chiro Kattenbos – Uitgavenbeheer</h1>
 
-    <!-- Overzichtknop -->
     <button id="toonOverzicht">Toon overzicht per groep</button>
 
-    <!-- Instellingen per groep -->
     <div id="groepInstellingen">
       <h3>Instellingen per groep</h3>
       <div id="instellingenVelden"></div>
     </div>
 
-    <!-- Overzichtstabel per groep -->
     <div id="groepOverzicht"></div>
 
-    <!-- Formulier om uitgaven toe te voegen -->
     <form id="uitgaveForm">
       <label for="groep">Groep:</label>
       <select id="groep" required>
@@ -77,7 +71,6 @@
       <button type="submit">Toevoegen</button>
     </form>
 
-    <!-- Filter op groep -->
     <div class="filter">
       <label for="filterGroep">Filter op groep:</label>
       <select id="filterGroep">
@@ -93,7 +86,6 @@
       </select>
     </div>
 
-    <!-- Tabel met uitgaven -->
     <table id="overzicht">
       <thead>
         <tr>
