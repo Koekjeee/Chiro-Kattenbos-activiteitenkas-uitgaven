@@ -152,6 +152,24 @@ document.addEventListener("DOMContentLoaded", function () {
       const label = document.createElement("h4");
       label.textContent = groep;
 
+      const ledenInput = document.createElement("input");
+      ledenInput.type = "number";
+      ledenInput.placeholder = "Aantal leden";
+      ledenInput.id = `leden-${groep}`;
+      ledenInput.style.marginRight = "10px";
+
+      const bedragInput = document.createElement("input");
+      bedragInput.type = "number";
+      bedragInput.placeholder = "Max bedrag per lid (€)";
+      bedragInput.id = `maxbedrag-${groep}`;
+
+      wrapper.appendChild(label);
+      wrapper.appendChild(ledenInput);
+      wrapper.appendChild(bedragInput);
+      container.appendChild(wrapper);
+    });
+  }
+
   function instellingenOpslaan() {
     alleGroepen.forEach(groep => {
       const leden = parseInt(document.getElementById(`leden-${groep}`).value);
@@ -161,12 +179,10 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
-      });
-    });
-  }
 
   toonInstellingenVelden();
 });
+
 
 
 
