@@ -103,9 +103,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   document.getElementById("toonOverzicht").addEventListener("click", function () {
     const overzichtDiv = document.getElementById("groepOverzicht");
+    const instellingenDiv = document.getElementById("instellingenVelden");
 
     if (overzichtZichtbaar) {
       overzichtDiv.innerHTML = "";
+      instellingenDiv.innerHTML = "";
       overzichtZichtbaar = false;
       return;
     }
@@ -124,24 +126,80 @@ document.addEventListener("DOMContentLoaded", function () {
         totaalPerGroep[u.groep] += bedrag;
       });
 
-      overzichtDiv.innerHTML = "<h3>Overzicht per groep</h3>";
+      instellingenDiv.innerHTML = "";
+      Object.keys(totaalPerGroep).forEach(groep => {
+        const container = document.createElement("div");
+        container.style.marginBottom = "10px";
 
+        container.innerHTML = `
+          <strong>${groep}</strong><br>
+          Aantal leden: <input type="number" min="1" id="leden-${groep}" style="width:60px">
+          Max €/lid: <input type="number" min="0" step="0.01" id="max-${groep}" style="width:80px">
+        `;
+
+        instellingenDiv.appendChild(container);
+      });
+
+      overzichtDiv.innerHTML = "<h3>Overzicht per groep</h3>";
       const tabel = document.createElement("table");
       tabel.className = "groepTabel";
 
       const header = tabel.insertRow();
-      header.innerHTML = "<th>Groep</th><th>Totaal (€)</th>";
+      header.innerHTML = "<th>Groep</th><th>Totaal (€)</th><th>Max toegestaan</th>";
       header.className = "groepHeader";
 
       Object.entries(totaalPerGroep).forEach(([groep, totaal]) => {
         const rij = tabel.insertRow();
         rij.style.backgroundColor = groepKleuren[groep] || "#f9f9f9";
+
+        const ledenInput = document.getElementById(`leden-${groep}`);
+        const maxInput = document.getElementById(`max-${groep}`);
+
+        [ledenInput, maxInput].forEach(input => {
+          input.addEventListener("input", () => updateOverzicht());
+        });
+
+        rij.setAttribute("data-groep", groep);
         rij.insertCell(0).textContent = groep;
         rij.insertCell(1).textContent = `€${totaal.toFixed(2)}`;
+        rij.insertCell(2).textContent = "-";
       });
 
       overzichtDiv.appendChild(tabel);
       overzichtZichtbaar = true;
     });
   });
+
+  function updateOverzicht() {
+    const rows = document.querySelectorAll(".groepTabel tr[data-groep]");
+
+    rows.forEach(row => {
+      const groep = row.getAttribute("data-groep");
+      const leden = parseInt(document.getElementById(`leden-${groep}`).value);
+      const maxPerLid = parseFloat(document.getElementById(`max-${groep}`).value);
+      const totaalCell = row.cells[1];
+      const maxCell = row.cells[2];
+
+      if (!isNaN(leden) && !isNaN(maxPerLid)) {
+        const maxToegestaan = leden * maxPerLid;
+        const totaal = parseFloat(totaalCell.textContent.replace("€", ""));
+        maxCell.textContent = `€${maxToegestaan.toFixed(2)}`;
+
+        if (totaal >= maxToegestaan) {
+          totaalCell.style.color = "red";
+          totaalCell.style.fontWeight = "bold";
+        } else if (totaal >= maxToegestaan * 0.9) {
+          totaalCell.style.color = "orange";
+          totaalCell.style.fontWeight = "bold";
+        } else {
+          totaalCell.style.color = "black";
+          totaalCell.style.fontWeight = "normal";
+        }
+      } else {
+        maxCell.textContent = "-";
+        totaalCell.style.color = "black";
+        totaalCell.style.fontWeight = "normal";
+      }
+    });
+  }
 });
