@@ -64,6 +64,53 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  
+  document.getElementById("exportPdfBtn").addEventListener("click", async function () {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const groepenData = {};
+  alleGroepen.forEach(g => groepenData[g] = []);
+
+  const snapshot = await firebase.database().ref("uitgaven").once("value");
+  const data = snapshot.val() || {};
+
+  Object.values(data).forEach(u => {
+    groepenData[u.groep].push(u);
+  });
+
+  let y = 20;
+  doc.setFontSize(16);
+  doc.text("Uitgavenoverzicht per groep", 20, y);
+  y += 10;
+
+  alleGroepen.forEach(groep => {
+    const uitgaven = groepenData[groep];
+    if (uitgaven.length === 0) return;
+
+    doc.setFontSize(14);
+    doc.text(groep, 20, y);
+    y += 8;
+
+    doc.setFontSize(11);
+    uitgaven.forEach(u => {
+      const regel = `${u.datum} – €${u.bedrag} – ${u.activiteit} ${u.betaald ? "(Betaald)" : "(Niet betaald)"}`;
+      doc.text(regel, 25, y);
+      y += 6;
+
+      if (y > 280) {
+        doc.addPage();
+        y = 20;
+      }
+    });
+
+    y += 8;
+  });
+
+  doc.save("uitgaven_per_groep.pdf");
+});
+  
+
   function controleerWachtwoord() {
     const invoer = document.getElementById("wachtwoord").value;
     const foutmelding = document.getElementById("loginFout");
@@ -183,3 +230,4 @@ document.addEventListener("DOMContentLoaded", function () {
     renderTabel(document.getElementById("filterGroep").value, this.value);
   });
 });
+
