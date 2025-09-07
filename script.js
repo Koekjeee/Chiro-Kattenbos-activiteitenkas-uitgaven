@@ -105,6 +105,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const overzichtDiv = document.getElementById("groepOverzicht");
     const instellingenDiv = document.getElementById("instellingenVelden");
 
+    if (!overzichtDiv || !instellingenDiv) return;
+
     if (overzichtZichtbaar) {
       overzichtDiv.innerHTML = "";
       instellingenDiv.innerHTML = "";
@@ -112,13 +114,16 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    firebase.database().ref("uitgaven").once("value", snapshot => {
-      const data = snapshot.val();
-      const uitgaven = data ? Object.values(data) : [];
+    Promise.all([
+      firebase.database().ref("uitgaven").once("value"),
+      firebase.database().ref("instellingen").once("value")
+    ]).then(([uitgavenSnap, instellingenSnap]) => {
+      const uitgavenData = uitgavenSnap.val() || {};
+      const instellingenData = instellingenSnap.val() || {};
 
       const totaalPerGroep = {};
 
-      uitgaven.forEach(u => {
+      Object.values(uitgavenData).forEach(u => {
         const bedrag = parseFloat(u.bedrag);
         if (!totaalPerGroep[u.groep]) {
           totaalPerGroep[u.groep] = 0;
@@ -128,16 +133,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
       instellingenDiv.innerHTML = "";
       Object.keys(totaalPerGroep).forEach(groep => {
+        const huidige = instellingenData[groep] || { leden: "", maxPerLid: "" };
+
         const container = document.createElement("div");
         container.style.marginBottom = "10px";
 
         container.innerHTML = `
           <strong>${groep}</strong><br>
-          Aantal leden: <input type="number" min="1" id="leden-${groep}" style="width:60px">
-          Max €/lid: <input type="number" min="0" step="0.01" id="max-${groep}" style="width:80px">
+          Aantal leden: <input type="number" min="1" id="leden-${groep}" value="${huidige.leden}" style="width:60px">
+          Max €/lid: <input type="number" min="0" step="0.01" id="max-${groep}" value="${huidige.maxPerLid}" style="width:80px">
         `;
 
         instellingenDiv.appendChild(container);
+
+        ["leden", "max"].forEach(type => {
+          const input = document.getElementById(`${type}-${groep}`);
+          input.addEventListener("input", () => {
+            const leden = parseInt(document.getElementById(`leden-${groep}`).value);
+            const maxPerLid = parseFloat(document.getElementById(`max-${groep}`).value);
+
+            firebase.database().ref("instellingen/" + groep).set({
+              leden: isNaN(leden) ? 0 : leden,
+              maxPerLid: isNaN(maxPerLid) ? 0 : maxPerLid
+            });
+
+            updateOverzicht();
+          });
+        });
       });
 
       overzichtDiv.innerHTML = "<h3>Overzicht per groep</h3>";
@@ -151,14 +173,6 @@ document.addEventListener("DOMContentLoaded", function () {
       Object.entries(totaalPerGroep).forEach(([groep, totaal]) => {
         const rij = tabel.insertRow();
         rij.style.backgroundColor = groepKleuren[groep] || "#f9f9f9";
-
-        const ledenInput = document.getElementById(`leden-${groep}`);
-        const maxInput = document.getElementById(`max-${groep}`);
-
-        [ledenInput, maxInput].forEach(input => {
-          input.addEventListener("input", () => updateOverzicht());
-        });
-
         rij.setAttribute("data-groep", groep);
         rij.insertCell(0).textContent = groep;
         rij.insertCell(1).textContent = `€${totaal.toFixed(2)}`;
@@ -167,6 +181,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       overzichtDiv.appendChild(tabel);
       overzichtZichtbaar = true;
+
+      updateOverzicht();
     });
   });
 
@@ -190,16 +206,4 @@ document.addEventListener("DOMContentLoaded", function () {
           totaalCell.style.fontWeight = "bold";
         } else if (totaal >= maxToegestaan * 0.9) {
           totaalCell.style.color = "orange";
-          totaalCell.style.fontWeight = "bold";
-        } else {
-          totaalCell.style.color = "black";
-          totaalCell.style.fontWeight = "normal";
-        }
-      } else {
-        maxCell.textContent = "-";
-        totaalCell.style.color = "black";
-        totaalCell.style.fontWeight = "normal";
-      }
-    });
-  }
-});
+          totaal
