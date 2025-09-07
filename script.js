@@ -135,4 +135,4 @@ document.addEventListener("DOMContentLoaded", function () {
       overzichtDiv.appendChild(tabel);
     });
   });
-}); // ← DIT is de ontbrekende sluiting van je script!
+}); // ✅ Dit is de correcte afsluiting van je script
