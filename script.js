@@ -56,9 +56,8 @@ document.addEventListener("DOMContentLoaded", function () {
           rij.insertCell(3).textContent = u.activiteit;
           rij.insertCell(4).textContent = u.datum;
           rij.insertCell(5).textContent = u.betaald ? "✅" : "❌";
-          rij.insertCell(6).textContent = "-";
 
-          const actieCel = rij.insertCell(7);
+          const actieCel = rij.insertCell(6);
           const knop = document.createElement("button");
           knop.textContent = "Verwijder";
           knop.className = "verwijder";
@@ -71,12 +70,14 @@ document.addEventListener("DOMContentLoaded", function () {
           };
           actieCel.appendChild(knop);
 
-          const wijzigCel = rij.insertCell(8);
-          const wijzigKnop = document.createElement("button");
-          wijzigKnop.textContent = u.betaald ? "Markeer als niet betaald" : "Markeer als betaald";
-          wijzigKnop.className = "wijzigBetaald";
-          wijzigKnop.onclick = () => {
-            firebase.database().ref("uitgaven/" + u.nummer).update({ betaald: !u.betaald }, function (error) {
+          const toggleCel = rij.insertCell(7);
+          toggleCel.className = "betaald-toggle";
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked = u.betaald;
+          checkbox.title = "Betaald aanvinken";
+          checkbox.onchange = () => {
+            firebase.database().ref("uitgaven/" + u.nummer).update({ betaald: checkbox.checked }, function (error) {
               if (!error) {
                 renderTabel(
                   document.getElementById("filterGroep").value,
@@ -85,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
               }
             });
           };
-          wijzigCel.appendChild(wijzigKnop);
+          toggleCel.appendChild(checkbox);
         });
     });
   }
@@ -95,4 +96,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const groep = document.getElementById("groep").value;
     const bedrag = parseFloat(document.getElementById("bedrag").value.replace(",", "."));
-   
+    const activiteit = document.getElementById("activiteit").value;
+    const datum = document.getElementById("datum").value;
+    const betaald = document.getElementById("betaald").checked;
+
+    if (!groep || isNaN(bedrag) || !activiteit || !datum) {
+      alert("Gelieve alle velden correct in te vullen.");
+      return;
+    }
+
+    const nummer = Date.now();
+    const nieuweUitgave = {
+      nummer,
+      groep,
+      bedrag: bedrag.toFixed(2),
+      activiteit,
+      datum,
+      betaald
+    };
+
+    firebase.database().ref("uitgaven/" + nummer).set(nieuweUitgave, function (error) {
+      if (!error) {
+        document.getElementById("uitgaveForm").reset();
+        renderTabel(
+          document.getElementById("filterGroep").value,
+          document.getElementById("filterBetaald").value
+        );
+      }
+    });
+  });
+
+  document.getElementById("filterGroep").addEventListener("change", function () {
+    renderTabel(this.value, document.getElementById("filterBetaald").value);
+  });
+
+  document.getElementById("filterBetaald").addEventListener("change", function () {
+    renderTabel(document.getElementById("filterGroep").value, this.value);
+  });
+});
