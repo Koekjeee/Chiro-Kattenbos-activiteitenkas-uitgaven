@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
         doc.setFontSize(11);
 
         items.forEach(u => {
-          const regel = `${u.datum} – €${u.bedrag} – ${u.activiteit} ${u.betaald ? "(✅)" : "(❌)"}`;
+          const regel = `${u.datum} – €${u.bedrag} – ${u.activiteit} ${u.betaald ? "(Betaald)" : "(Niet betaald)"}`;
           doc.text(regel, 25, y);
           y += 6;
           if (y > 280) { doc.addPage(); y = 20; }
@@ -189,3 +189,4 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("filterBetaald")
     .addEventListener("change", e => renderTabel(document.getElementById("filterGroep").value, e.target.value));
 });
+
