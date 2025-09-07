@@ -102,7 +102,7 @@ td.betaald-toggle input[type="checkbox"] {
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   margin-bottom: 15px;
   font-size: 14px;
-  max-width: 6000px;
+  max-width: 600px;
   width: 100%;
 }
 
@@ -147,4 +147,5 @@ td.betaald-toggle input[type="checkbox"] {
   display: flex;
   justify-content: space-between;
 }
+
 
