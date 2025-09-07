@@ -106,7 +106,6 @@ td.betaald-toggle input[type="checkbox"] {
   width: 100%;
 }
 
-/* Highlight-knop */
 .highlight-btn {
   display: inline-block;
   background-color: #ffc107;
@@ -117,18 +116,14 @@ td.betaald-toggle input[type="checkbox"] {
   cursor: pointer;
   animation: pulse 2s infinite;
   font-weight: bold;
+  width: 100%;
+  text-align: left;
 }
 
 @keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 rgba(255,193,7, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 10px rgba(255,193,7, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 rgba(255,193,7, 0);
-  }
+  0% { box-shadow: 0 0 0 rgba(255,193,7, 0.7); }
+  70% { box-shadow: 0 0 10px rgba(255,193,7, 0); }
+  100% { box-shadow: 0 0 0 rgba(255,193,7, 0); }
 }
 
 #summaryContent {
@@ -143,9 +138,10 @@ td.betaald-toggle input[type="checkbox"] {
 }
 
 #summaryContent li {
-  padding: 2px 0;
+  padding: 6px 10px;
   display: flex;
   justify-content: space-between;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  font-weight: 500;
 }
-
-
