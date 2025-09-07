@@ -49,10 +49,10 @@ function verwijderUitgave(nr) {
 document.getElementById("uitgaveForm").addEventListener("submit", function(e) {
   e.preventDefault();
 
-  const groep = document.getElementById("groep").value;
-  const rawBedrag = document.getElementById("bedrag").value.trim();
-  const bedrag = parseFloat(rawBedrag.replace(",", "."));
-  const activiteit = document.getElementById("activiteit").value;
+  const groep = document.getElementById("groep").value.trim();
+  const rawBedrag = document.getElementById("bedrag").value.trim().replace(",", ".");
+  const bedrag = parseFloat(rawBedrag);
+  const activiteit = document.getElementById("activiteit").value.trim();
   const datum = document.getElementById("datum").value;
 
   if (!groep || isNaN(bedrag) || bedrag <= 0 || !activiteit || !datum) {
@@ -79,4 +79,3 @@ document.getElementById("filterGroep").addEventListener("change", function() {
 });
 
 renderTabel();
-
