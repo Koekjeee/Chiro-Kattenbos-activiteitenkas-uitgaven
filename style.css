@@ -105,12 +105,29 @@ td.betaald-toggle input[type="checkbox"] {
   width: 250px;
 }
 
-#toggleSummary {
-  background: none;
+/* Highlight-knop */
+.highlight-btn {
+  display: inline-block;
+  background-color: #ffc107;
+  color: #333;
   border: none;
-  font-weight: bold;
+  border-radius: 4px;
+  padding: 4px 8px;
   cursor: pointer;
-  padding: 0;
+  animation: pulse 2s infinite;
+  font-weight: bold;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 rgba(255,193,7, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 10px rgba(255,193,7, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(255,193,7, 0);
+  }
 }
 
 #summaryContent {
