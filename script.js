@@ -23,8 +23,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (invoer === correctWachtwoord) {
       document.getElementById("loginScherm").style.display = "none";
       document.getElementById("appInhoud").style.display = "block";
-      foutmelding.textContent
+      foutmelding.textContent = "";
       renderTabel();
+      berekenGroepOverzicht();
     } else {
       foutmelding.textContent = "Wachtwoord is onjuist.";
     }
@@ -67,6 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
               document.getElementById("filterGroep").value,
               document.getElementById("filterBetaald").value
             );
+            berekenGroepOverzicht();
           };
           actieCel.appendChild(knop);
 
@@ -83,6 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
                   document.getElementById("filterGroep").value,
                   document.getElementById("filterBetaald").value
                 );
+                berekenGroepOverzicht();
               }
             });
           };
@@ -122,6 +125,7 @@ document.addEventListener("DOMContentLoaded", function () {
           document.getElementById("filterGroep").value,
           document.getElementById("filterBetaald").value
         );
+        berekenGroepOverzicht();
       }
     });
   });
@@ -133,37 +137,85 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("filterBetaald").addEventListener("change", function () {
     renderTabel(document.getElementById("filterGroep").value, this.value);
   });
-// ✅ Herstel instellingen per groep
-function toonInstellingenVelden() {
-  const container = document.getElementById("instellingenVelden");
-  container.innerHTML = "";
 
-  alleGroepen.forEach(groep => {
-    const wrapper = document.createElement("div");
-    wrapper.style.marginBottom = "10px";
-    wrapper.style.backgroundColor = groepKleuren[groep] || "#f0f0f0";
-    wrapper.style.padding = "10px";
-    wrapper.style.borderRadius = "6px";
+  function toonInstellingenVelden() {
+    const container = document.getElementById("instellingenVelden");
+    container.innerHTML = "";
 
-    const label = document.createElement("h4");
-    label.textContent = groep;
+    alleGroepen.forEach(groep => {
+      const wrapper = document.createElement("div");
+      wrapper.style.marginBottom = "10px";
+      wrapper.style.backgroundColor = groepKleuren[groep] || "#f0f0f0";
+      wrapper.style.padding = "10px";
+      wrapper.style.borderRadius = "6px";
 
-    const ledenInput = document.createElement("input");
-    ledenInput.type = "number";
-    ledenInput.placeholder = "Aantal leden";
-    ledenInput.id = `leden-${groep}`;
-    ledenInput.style.marginRight = "10px";
+      const label = document.createElement("h4");
+      label.textContent = groep;
 
-    const bedragInput = document.createElement("input");
-    bedragInput.type = "number";
-    bedragInput.placeholder = "Max bedrag per lid (€)";
-    bedragInput.id = `maxbedrag-${groep}`;
+      const ledenInput = document.createElement("input");
+      ledenInput.type = "number";
+      ledenInput.placeholder = "Aantal leden";
+      ledenInput.id = `leden-${groep}`;
+      ledenInput.style.marginRight = "10px";
 
-    wrapper.appendChild(label);
-    wrapper.appendChild(ledenInput);
-    wrapper.appendChild(bedragInput);
-    container.appendChild(wrapper);
-  });
-}
+      const bedragInput = document.createElement("input");
+      bedragInput.type = "number";
+      bedragInput.placeholder = "Max bedrag per lid (€)";
+      bedragInput.id = `maxbedrag-${groep}`;
 
-toonInstellingenVelden();
+      wrapper.appendChild(label);
+      wrapper.appendChild(ledenInput);
+      wrapper.appendChild(bedragInput);
+      container.appendChild(wrapper);
+    });
+  }
+
+  function instellingenOpslaan() {
+    alleGroepen.forEach(groep => {
+      const leden = parseInt(document.getElementById(`leden-${groep}`).value);
+      const maxbedrag = parseFloat(document.getElementById(`maxbedrag-${groep}`).value);
+      if (!isNaN(leden) && !isNaN(maxbedrag)) {
+        firebase.database().ref("instellingen/" + groep).set({ leden, maxbedrag });
+      }
+    });
+    berekenGroepOverzicht();
+  }
+
+  function berekenGroepOverzicht() {
+    const tbody = document.querySelector("#groepTabel tbody");
+    tbody.innerHTML = "";
+
+    firebase.database().ref("instellingen").once("value", instellingenSnap => {
+      const instellingen = instellingenSnap.val() || {};
+
+      firebase.database().ref("uitgaven").once("value", uitgavenSnap => {
+        const uitgaven = Object.values(uitgavenSnap.val() || {});
+        alleGroepen.forEach(groep => {
+          const groepUitgaven = uitgaven.filter(u => u.groep === groep);
+          const totaal = groepUitgaven.reduce((sum, u) => sum + parseFloat(u.bedrag), 0);
+          const inst = instellingen[groep];
+          const max = inst ? inst.leden * inst.maxbedrag : 0;
+
+          const rij = tbody.insertRow();
+          rij.style.backgroundColor = groepKleuren[groep] || "#fff";
+          rij.insertCell(0).textContent = groep;
+          rij.insertCell(1).textContent = `€${totaal.toFixed(2)}`;
+          rij.insertCell(2).textContent = `€${max.toFixed(2)}`;
+
+          const cel = rij.cells[1];
+          if (max === 0) {
+            cel.style.color = "#333";
+          } else if (totaal >= max) {
+            cel.style.color = "#dc3545";
+          } else if (totaal >= max * 0.8) {
+            cel.style.color = "#fd7e14";
+          } else {
+            cel.style.color = "#28a745";
+          }
+        });
+      });
+    });
+  }
+
+  toonInstellingenVelden();
+});
