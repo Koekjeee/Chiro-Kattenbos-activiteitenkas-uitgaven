@@ -134,87 +134,38 @@ document.addEventListener("DOMContentLoaded", function () {
     renderTabel(document.getElementById("filterGroep").value, this.value);
   });
 
-// ✅ Toggle overzicht per groep
-let overzichtZichtbaar = false;
-
-document.getElementById("toonOverzicht").addEventListener("click", function () {
-  const overzichtDiv = document.getElementById("groepOverzicht");
-
-  if (overzichtZichtbaar) {
-    overzichtDiv.innerHTML = "";
-    overzichtZichtbaar = false;
-    return;
-  }
-
-  overzichtDiv.innerHTML = "<p>Overzicht wordt geladen...</p>";
-  overzichtZichtbaar = true;
-
-  firebase.database().ref("uitgaven").once("value", snapshot => {
-    const data = snapshot.val() || {};
-    const totaalPerGroep = {};
-
-    alleGroepen.forEach(groep => totaalPerGroep[groep] = 0);
-
-    Object.values(data).forEach(u => {
-      const bedrag = parseFloat(u.bedrag);
-      if (!isNaN(bedrag)) {
-        totaalPerGroep[u.groep] += bedrag;
-      }
-    });
-
-    overzichtDiv.innerHTML = "<h3>Overzicht per groep</h3>";
-    const tabel = document.createElement("table");
-    tabel.className = "groepTabel";
-
-    const header = tabel.insertRow();
-    header.innerHTML = "<th>Groep</th><th>Totaal (€)</th>";
-    header.className = "groepHeader";
+  // ✅ Herstel instellingen per groep
+  function toonInstellingenVelden() {
+    const container = document.getElementById("instellingenVelden");
+    container.innerHTML = "";
 
     alleGroepen.forEach(groep => {
-      const rij = tabel.insertRow();
-      rij.style.backgroundColor = groepKleuren[groep] || "#f9f9f9";
-      rij.insertCell(0).textContent = groep;
-      rij.insertCell(1).textContent = `€${totaalPerGroep[groep].toFixed(2)}`;
+      const wrapper = document.createElement("div");
+      wrapper.style.marginBottom = "10px";
+      wrapper.style.backgroundColor = groepKleuren[groep] || "#f0f0f0";
+      wrapper.style.padding = "10px";
+      wrapper.style.borderRadius = "6px";
+
+      const label = document.createElement("h4");
+      label.textContent = groep;
+
+      const ledenInput = document.createElement("input");
+      ledenInput.type = "number";
+      ledenInput.placeholder = "Aantal leden";
+      ledenInput.id = `leden-${groep}`;
+      ledenInput.style.marginRight = "10px";
+
+      const bedragInput = document.createElement("input");
+      bedragInput.type = "number";
+      bedragInput.placeholder = "Max bedrag per lid (€)";
+      bedragInput.id = `maxbedrag-${groep}`;
+
+      wrapper.appendChild(label);
+      wrapper.appendChild(ledenInput);
+      wrapper.appendChild(bedragInput);
+      container.appendChild(wrapper);
     });
+  }
 
-    overzichtDiv.appendChild(tabel);
-  });
+  toonInstellingenVelden();
 });
-
-// ✅ Herstel instellingen per groep
-function toonInstellingenVelden() {
-  const container = document.getElementById("instellingenVelden");
-  container.innerHTML = "";
-
-  alleGroepen.forEach(groep => {
-    const wrapper = document.createElement("div");
-    wrapper.style.marginBottom = "10px";
-    wrapper.style.backgroundColor = groepKleuren[groep] || "#f0f0f0";
-    wrapper.style.padding = "10px";
-    wrapper.style.borderRadius = "6px";
-
-    const label = document.createElement("h4");
-    label.textContent = groep;
-
-    const ledenInput = document.createElement("input");
-    ledenInput.type = "number";
-    ledenInput.placeholder = "Aantal leden";
-    ledenInput.id = `leden-${groep}`;
-    ledenInput.style.marginRight = "10px";
-
-    const bedragInput = document.createElement("input");
-    bedragInput.type = "number";
-    bedragInput.placeholder = "Max bedrag per lid (€)";
-    bedragInput.id = `maxbedrag-${groep}`;
-
-    wrapper.appendChild(label);
-    wrapper.appendChild(ledenInput);
-    wrapper.appendChild(bedragInput);
-    container.appendChild(wrapper);
-  });
-}
-
-toonInstellingenVelden();
-}); // ✅ correct afgesloten
-
-
