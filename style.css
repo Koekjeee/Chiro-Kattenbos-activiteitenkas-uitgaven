@@ -9,7 +9,7 @@ h1, h2, h3 {
   color: #333;
 }
 
-form, .filter, #loginScherm, #groepInstellingen {
+form, .filter, #loginScherm {
   background: #fff;
   padding: 15px;
   border-radius: 8px;
@@ -104,3 +104,4 @@ td.betaald-toggle input[type="checkbox"] {
 .bon-link {
   display: none;
 }
+
