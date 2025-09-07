@@ -38,14 +38,25 @@
     <h1>Chiro Kattenbos – Uitgavenbeheer</h1>
 
     <!-- 📈 Samenvatting per groep (onder de titel) -->
-    <div id="summaryPanel">
-      <button id="toggleSummary" class="highlight-btn">
-        ▸ Toon uitgaven per groep
-      </button>
-      <div id="summaryContent">
-        <div id="summaryCards" class="cards-container"></div>
-      </div>
-    </div>
+<!-- 📈 Samenvatting per groep -->
+<div id="summaryPanel">
+  <button id="toggleSummary" class="highlight-btn">▸ Toon uitgaven per groep</button>
+  <div id="summaryContent">
+    <table id="summaryTable">
+      <thead>
+        <tr>
+          <th>Groep</th>
+          <th>Leden</th>
+          <th>Budget / lid (€)</th>
+          <th>Totaal budget (€)</th>
+          <th>Uitgaven (€)</th>
+          <th>Beschikbaar (€)</th>
+        </tr>
+      </thead>
+      <tbody id="summaryBody"></tbody>
+    </table>
+  </div>
+</div>
 
     <!-- ✅ Uitgaveformulier -->
     <form id="uitgaveForm">
@@ -121,3 +132,4 @@
   <script src="script.js"></script>
 </body>
 </html>
+
