@@ -4,9 +4,11 @@ body {
   padding: 20px;
   background-color: #f0f4f8;
 }
+
 h1, h2, h3 {
   color: #333;
 }
+
 form, .filter, #loginScherm, #groepInstellingen, #groepOverzicht {
   background: #fff;
   padding: 15px;
@@ -14,11 +16,13 @@ form, .filter, #loginScherm, #groepInstellingen, #groepOverzicht {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   margin-bottom: 20px;
 }
+
 label {
   display: block;
   margin-top: 10px;
   font-weight: bold;
 }
+
 input, select, button {
   width: 100%;
   padding: 8px;
@@ -27,6 +31,19 @@ input, select, button {
   border: 1px solid #ccc;
   box-sizing: border-box;
 }
+
+input[type="checkbox"] {
+  width: auto;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+input[type="file"] {
+  padding: 4px;
+  background-color: #f8f9fa;
+  border: 1px solid #ccc;
+}
+
 button {
   background-color: #28a745;
   color: white;
@@ -34,9 +51,11 @@ button {
   margin-top: 15px;
   cursor: pointer;
 }
+
 button:hover {
   background-color: #218838;
 }
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -45,15 +64,18 @@ table {
   overflow: hidden;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
+
 th, td {
   padding: 10px;
   border-bottom: 1px solid #eee;
   text-align: left;
 }
+
 th {
   background-color: #007bff;
   color: white;
 }
+
 .verwijder {
   background-color: #dc3545;
   color: white;
@@ -62,9 +84,11 @@ th {
   border-radius: 4px;
   cursor: pointer;
 }
+
 .verwijder:hover {
   background-color: #c82333;
 }
+
 .groepTabel {
   width: 100%;
   border-collapse: collapse;
@@ -74,12 +98,30 @@ th {
   border-radius: 6px;
   overflow: hidden;
 }
+
 .groepTabel th, .groepTabel td {
   padding: 4px 6px;
   border-bottom: 1px solid #eee;
   text-align: left;
 }
+
 .groepHeader {
   background-color: #007bff;
   color: white;
+}
+
+/* ✅ Betaald status */
+td:has(.betaald-icon) {
+  font-size: 1.2em;
+}
+
+/* 📎 Bonnetje link */
+.bon-link {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 0.9em;
+}
+
+.bon-link:hover {
+  text-decoration: underline;
 }
