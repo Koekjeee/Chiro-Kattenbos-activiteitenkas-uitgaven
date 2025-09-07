@@ -9,14 +9,13 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("loginScherm").style.display = "none";
       document.getElementById("appInhoud").style.display = "block";
       foutmelding.textContent = "";
-      renderTabel();
     } else {
       foutmelding.textContent = "Wachtwoord is onjuist.";
     }
   }
 
   window.controleerWachtwoord = controleerWachtwoord;
-
+});
   const groepKleuren = {
     Ribbels: "#cce5ff",
     Speelclubs: "#ffe5cc",
@@ -109,3 +108,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
     Promise.all([
       firebase
+
