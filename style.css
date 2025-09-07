@@ -93,3 +93,39 @@ td.betaald-toggle input[type="checkbox"] {
   transform: scale(1.3);
   margin: 0;
 }
+
+/* Samenvatting paneel */
+#summaryPanel {
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 15px;
+  font-size: 14px;
+  width: 250px;
+}
+
+#toggleSummary {
+  background: none;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+}
+
+#summaryContent {
+  display: none;
+  margin-top: 8px;
+}
+
+#summaryContent ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#summaryContent li {
+  padding: 2px 0;
+  display: flex;
+  justify-content: space-between;
+}
