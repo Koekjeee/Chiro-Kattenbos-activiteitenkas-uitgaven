@@ -1,21 +1,3 @@
-<!-- Firebase compat SDK voor eenvoudige HTML -->
-<script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-database-compat.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyBQ7lu-1PDD28LWuW9vgHcELj2mlGzpE70",
-    authDomain: "chiroapp-c51eb.firebaseapp.com",
-    databaseURL: "https://chiroapp-c51eb-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "chiroapp-c51eb",
-    storageBucket: "chiroapp-c51eb.appspot.com",
-    messagingSenderId: "667256455082",
-    appId: "1:667256455082:web:e968feee1b636eab47b5d3",
-    measurementId: "G-ER48ZLWJBC"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-</script>
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -23,72 +5,96 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Chiro Kattenbos Uitgaven</title>
   <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBQ7lu-1PDD28LWuW9vgHcELj2mlGzpE70",
+      authDomain: "chiroapp-c51eb.firebaseapp.com",
+      databaseURL: "https://chiroapp-c51eb-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "chiroapp-c51eb",
+      storageBucket: "chiroapp-c51eb.appspot.com",
+      messagingSenderId: "667256455082",
+      appId: "1:667256455082:web:e968feee1b636eab47b5d3",
+      measurementId: "G-ER48ZLWJBC"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+  </script>
 </head>
 <body>
 
-  <h1>Chiro Kattenbos – Uitgavenbeheer ACTIVITEITENKAS - by Bjarne Welkenhuyzen</h1>
-
-  <form id="uitgaveForm">
-    <label for="groep">Groep:</label>
-    <select id="groep" required>
-      <option value="">-- Kies een groep --</option>
-      <option>Ribbels</option>
-      <option>Speelclubs</option>
-      <option>Rakkers</option>
-      <option>Kwiks</option>
-      <option>Tippers</option>
-      <option>Toppers</option>
-      <option>Aspi</option>
-      <option>LEIDING</option>
-    </select>
-
-    <label for="bedrag">Bedrag (€):</label>
-    <input type="text" id="bedrag" required>
-
-    <label for="activiteit">Activiteit/Omschrijving:</label>
-    <input type="text" id="activiteit" required>
-
-    <label for="datum">Datum:</label>
-    <input type="date" id="datum" required>
-
-    <button type="submit">Toevoegen</button>
-  </form>
-
-  <div class="filter">
-    <label for="filterGroep">Filter op groep:</label>
-    <select id="filterGroep">
-      <option value="">Alle groepen</option>
-      <option>Ribbels</option>
-      <option>Speelclubs</option>
-      <option>Rakkers</option>
-      <option>Kwiks</option>
-      <option>Tippers</option>
-      <option>Toppers</option>
-      <option>Aspi</option>
-      <option>LEIDING</option>
-    </select>
+  <!-- Inlogscherm -->
+  <div id="loginScherm">
+    <h2>Inloggen</h2>
+    <p>Voer het wachtwoord in om toegang te krijgen:</p>
+    <input type="password" id="wachtwoord" placeholder="Wachtwoord">
+    <button onclick="controleerWachtwoord()">Inloggen</button>
+    <p id="loginFout" style="color:red;"></p>
   </div>
 
-  <table id="overzicht">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Groep</th>
-        <th>Bedrag</th>
-        <th>Activiteit</th>
-        <th>Datum</th>
-        <th>Actie</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <!-- App-inhoud -->
+  <div id="appInhoud" style="display:none;">
+    <h1>Chiro Kattenbos – Uitgavenbeheer</h1>
+
+    <form id="uitgaveForm">
+      <label for="groep">Groep:</label>
+      <select id="groep" required>
+        <option value="">-- Kies een groep --</option>
+        <option>Ribbels</option>
+        <option>Speelclubs</option>
+        <option>Rakkers</option>
+        <option>Kwiks</option>
+        <option>Tippers</option>
+        <option>Toppers</option>
+        <option>Aspi</option>
+        <option>LEIDING</option>
+      </select>
+
+      <label for="bedrag">Bedrag (€):</label>
+      <input type="text" id="bedrag" required>
+
+      <label for="activiteit">Activiteit/Omschrijving:</label>
+      <input type="text" id="activiteit" required>
+
+      <label for="datum">Datum:</label>
+      <input type="date" id="datum" required>
+
+      <button type="submit">Toevoegen</button>
+    </form>
+
+    <div class="filter">
+      <label for="filterGroep">Filter op groep:</label>
+      <select id="filterGroep">
+        <option value="">Alle groepen</option>
+        <option>Ribbels</option>
+        <option>Speelclubs</option>
+        <option>Rakkers</option>
+        <option>Kwiks</option>
+        <option>Tippers</option>
+        <option>Toppers</option>
+        <option>Aspi</option>
+        <option>LEIDING</option>
+      </select>
+    </div>
+
+    <table id="overzicht">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Groep</th>
+          <th>Bedrag</th>
+          <th>Activiteit</th>
+          <th>Datum</th>
+          <th>Actie</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
   <script src="script.js"></script>
 </body>
 </html>
-
-
-
-
-
-
