@@ -32,92 +32,9 @@
     <p id="loginFout" style="color: red;"></p>
   </div>
 
-  
- <!-- 📋 App -->
-<div id="appInhoud" style="display: none;">
-  <h1>Chiro Kattenbos – Uitgavenbeheer</h1>
-
-  <!-- ✅ Overzicht per groep -->
-  <button id="toonOverzicht">Toon overzicht per groep</button>
-  <div id="groepOverzicht" style="margin-top: 20px;"></div>
-
-  <!-- ✅ Instellingen per groep -->
-  <div id="groepInstellingen">
-    <h3>Instellingen per groep</h3>
-    <div id="instellingenVelden"></div>
-  </div>
-
-  <!-- ✅ Uitgaveformulier -->
-  <form id="uitgaveForm">
-    <label for="groep">Groep:</label>
-    <select id="groep" required>
-      <option value="">-- Kies een groep --</option>
-      <option>Ribbels</option>
-      <option>Speelclubs</option>
-      <option>Rakkers</option>
-      <option>Kwiks</option>
-      <option>Tippers</option>
-      <option>Toppers</option>
-      <option>Aspi</option>
-      <option>LEIDING</option>
-    </select>
-
-    <label for="bedrag">Bedrag (€):</label>
-    <input type="text" id="bedrag" required />
-
-    <label for="activiteit">Activiteit/Omschrijving:</label>
-    <input type="text" id="activiteit" required />
-
-    <label for="datum">Datum:</label>
-    <input type="date" id="datum" required />
-
-    <label><input type="checkbox" id="betaald" /> Betaald</label>
-
-    <button type="submit">Toevoegen</button>
-  </form>
-
-  <!-- 🔍 Filters -->
-  <div class="filter">
-    <label for="filterGroep">Filter op groep:</label>
-    <select id="filterGroep">
-      <option value="">Alle groepen</option>
-      <option>Ribbels</option>
-      <option>Speelclubs</option>
-      <option>Rakkers</option>
-      <option>Kwiks</option>
-      <option>Tippers</option>
-      <option>Toppers</option>
-      <option>Aspi</option>
-      <option>LEIDING</option>
-    </select>
-  </div>
-
-  <div class="filter">
-    <label for="filterBetaald">Filter op betaald:</label>
-    <select id="filterBetaald">
-      <option value="">Alles</option>
-      <option value="true">Betaald</option>
-      <option value="false">Niet betaald</option>
-    </select>
-  </div>
-
-  <!-- 📊 Tabel -->
-  <table id="overzicht">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Groep</th>
-        <th>Bedrag</th>
-        <th>Activiteit</th>
-        <th>Datum</th>
-        <th>Betaald</th>
-        <th>Actie</th>
-        <th>Betaald aanvinken</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div>
+  <!-- 📋 App -->
+  <div id="appInhoud" style="display: none;">
+    <h1>Chiro Kattenbos – Uitgavenbeheer</h1>
 
     <!-- ✅ Uitgaveformulier -->
     <form id="uitgaveForm">
@@ -194,4 +111,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
