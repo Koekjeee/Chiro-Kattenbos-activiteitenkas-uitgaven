@@ -95,18 +95,51 @@ td.betaald-toggle input[type="checkbox"] {
 }
 
 /* Compactere groepentabel */
-#groepTabel td, #groepTabel th {
-  padding: 6px 8px;
-  font-size: 0.9em;
-  line-height: 1.2;
+.compact-box {
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  max-width: 400px;
+  margin: 0 auto 20px auto;
+  font-size: 0.85em;
+}
+
+.compact-box h3 {
+  margin-top: 0;
+  font-size: 1em;
+  display: inline-block;
+}
+
+#refreshGroepOverzicht {
+  float: right;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  cursor: pointer;
+}
+
+#refreshGroepOverzicht:hover {
+  background-color: #0056b3;
+}
+
+#groepTabel {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+#groepTabel th, #groepTabel td {
+  padding: 4px 6px;
+  text-align: left;
+  font-size: 0.85em;
+  border-bottom: 1px solid #eee;
 }
 
 #groepTabel th {
-  background-color: #444;
-  color: #fff;
-  font-weight: 600;
-}
-
-#groepTabel td {
-  font-weight: 500;
+  background-color: #343a40;
+  color: white;
 }
