@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   window.controleerWachtwoord = controleerWachtwoord;
 
-  function renderTabel(filter = "") {
+  function renderTabel(filterGroep = "", filterBetaald = "") {
     const tbody = document.querySelector("#overzicht tbody");
     tbody.innerHTML = "";
 
@@ -41,7 +41,11 @@ document.addEventListener("DOMContentLoaded", function () {
       const uitgaven = data ? Object.values(data) : [];
 
       uitgaven
-        .filter(u => !filter || u.groep === filter)
+        .filter(u => {
+          const groepMatch = !filterGroep || u.groep === filterGroep;
+          const betaaldMatch = filterBetaald === "" || String(u.betaald) === filterBetaald;
+          return groepMatch && betaaldMatch;
+        })
         .sort((a, b) => b.nummer - a.nummer)
         .forEach(u => {
           const rij = tbody.insertRow();
@@ -60,7 +64,10 @@ document.addEventListener("DOMContentLoaded", function () {
           knop.className = "verwijder";
           knop.onclick = () => {
             firebase.database().ref("uitgaven/" + u.nummer).remove();
-            renderTabel(document.getElementById("filterGroep").value);
+            renderTabel(
+              document.getElementById("filterGroep").value,
+              document.getElementById("filterBetaald").value
+            );
           };
           actieCel.appendChild(knop);
         });
@@ -94,13 +101,20 @@ document.addEventListener("DOMContentLoaded", function () {
     firebase.database().ref("uitgaven/" + nummer).set(nieuweUitgave, function (error) {
       if (!error) {
         document.getElementById("uitgaveForm").reset();
-        renderTabel(document.getElementById("filterGroep").value);
+        renderTabel(
+          document.getElementById("filterGroep").value,
+          document.getElementById("filterBetaald").value
+        );
       }
     });
   });
 
   document.getElementById("filterGroep").addEventListener("change", function () {
-    renderTabel(this.value);
+    renderTabel(this.value, document.getElementById("filterBetaald").value);
+  });
+
+  document.getElementById("filterBetaald").addEventListener("change", function () {
+    renderTabel(document.getElementById("filterGroep").value, this.value);
   });
 
   let overzichtZichtbaar = false;
@@ -190,14 +204,4 @@ document.addEventListener("DOMContentLoaded", function () {
     const rows = document.querySelectorAll(".groepTabel tr[data-groep]");
     rows.forEach(row => {
       const groep = row.getAttribute("data-groep");
-      const leden = parseInt(document.getElementById(`leden-${groep}`).value);
-      const maxPerLid = parseFloat(document.getElementById(`max-${groep}`).value);
-      const totaalCell = row.cells[1];
-      const maxCell = row.cells[2];
-
-      if (!isNaN(leden) && !isNaN(maxPerLid)) {
-        const maxToegestaan = leden * maxPerLid;
-        const totaal = parseFloat(totaalCell.textContent.replace("€", ""));
-        maxCell.textContent = `€${maxToegestaan.toFixed(2)}`;
-
-        if (tota
+      const leden = parseInt(document.getElementById(`leden-${groep
