@@ -205,3 +205,21 @@ document.addEventListener("DOMContentLoaded", function () {
     rows.forEach(row => {
       const groep = row.getAttribute("data-groep");
       const leden = parseInt(document.getElementById(`leden-${groep
+                                                              
+        if (totaal >= maxToegestaan) {
+          totaalCell.style.color = "red";
+        } else if (totaal >= maxToegestaan * 0.75) {
+          totaalCell.style.color = "orange";
+        } else {
+          totaalCell.style.color = "green";
+        }
+
+        totaalCell.style.fontWeight = "bold";
+      } else {
+        maxCell.textContent = "-";
+        totaalCell.style.color = "black";
+        totaalCell.style.fontWeight = "normal";
+      }
+    });
+  } // sluit updateOverzicht()
+}); // sluit DOMContentLoaded()
