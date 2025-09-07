@@ -193,4 +193,17 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!isNaN(leden) && !isNaN(maxPerLid)) {
         const maxToegestaan = leden * maxPerLid;
         const totaal = parseFloat(totaalCell.textContent.replace("€", ""));
-        maxCell.textContent = `€${max
+        maxCell.textContent = `€${maxToegestaan.toFixed(2)}`;
+
+        if (totaal >= maxToegestaan) {
+          totaalCell.style.color = "red";
+          totaalCell.style.fontWeight = "bold";
+        } else if (totaal >= maxToegestaan * 0.75) {
+          totaalCell.style.color = "orange";
+          totaalCell.style.fontWeight = "bold";
+        } else {
+          totaalCell.style.color = "green";
+          totaalCell.style.fontWeight = "bold";
+        }
+      } else {
+        maxCell.textContent = "-
