@@ -15,6 +15,10 @@ document.addEventListener("DOMContentLoaded", function () {
     LEIDING: "#dddddd"
   };
 
+  const storage = firebase.storage();
+  
+  
+
   // Toggle paneel en laad samenvatting
   function setupSummaryToggle() {
     const btn = document.getElementById("toggleSummary");
@@ -179,25 +183,60 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   document.getElementById("uitgaveForm").addEventListener("submit", e => {
-    e.preventDefault();
-    const g = document.getElementById("groep").value;
-    const b = parseFloat(document.getElementById("bedrag").value.replace(",", ".")) || 0;
-    const a = document.getElementById("activiteit").value;
-    const d = document.getElementById("datum").value;
-    const p = document.getElementById("betaald").checked;
-    if (!g || isNaN(b) || !a || !d) return alert("Gelieve alle velden correct in te vullen.");
-    const id = Date.now();
-    const obj = { nummer: id, groep: g, bedrag: b.toFixed(2), activiteit: a, datum: d, betaald: p };
-    firebase.database().ref("uitgaven/" + id).set(obj, err => {
-      if (!err) {
-        document.getElementById("uitgaveForm").reset();
-        renderTabel(
-          document.getElementById("filterGroep").value,
-          document.getElementById("filterBetaald").value
-        );
-      }
-    });
+document.getElementById("uitgaveForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  // Lees velden
+  const groep    = document.getElementById("groep").value;
+  const bedrag   = parseFloat(document.getElementById("bedrag").value.replace(",", ".")) || 0;
+  const activiteit = document.getElementById("activiteit").value;
+  const datum    = document.getElementById("datum").value;
+  const betaald  = document.getElementById("betaald").checked;
+
+  if (!groep || isNaN(bedrag) || !activiteit || !datum) {
+    return alert("Gelieve alle velden correct in te vullen.");
+  }
+
+  // Uniek nummer voor deze uitgave
+  const nummer = Date.now().toString();
+
+  // Check of er een bestand is geselecteerd
+  const fileInput = document.getElementById("bon");
+  let bonUrl = "";
+
+  if (fileInput.files.length) {
+    const bestand = fileInput.files[0];
+    const ext = bestand.name.split('.').pop();
+    const storageRef = storage.ref(`bonnen/${nummer}.${ext}`);
+
+    // Uploaden
+    const snapshot = await storageRef.put(bestand);
+    // Download-URL ophalen
+    bonUrl = await snapshot.ref.getDownloadURL();
+  }
+
+  // Nieuw uitgave-object inclusief bonUrl
+  const nieuweUitgave = {
+    nummer,
+    groep,
+    bedrag:   bedrag.toFixed(2),
+    activiteit,
+    datum,
+    betaald,
+    bonUrl    // lege string of echte URL
+  };
+
+  // Opslaan in Realtime Database
+  firebase.database().ref("uitgaven/" + nummer).set(nieuweUitgave, error => {
+    if (!error) {
+      document.getElementById("uitgaveForm").reset();
+      renderTabel(
+        document.getElementById("filterGroep").value,
+        document.getElementById("filterBetaald").value
+      );
+    }
   });
+});
 
   document.getElementById("filterGroep")
     .addEventListener("change", e => renderTabel(e.target.value, document.getElementById("filterBetaald").value));
@@ -205,5 +244,6 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("filterBetaald")
     .addEventListener("change", e => renderTabel(document.getElementById("filterGroep").value, e.target.value));
 });
+
 
 
