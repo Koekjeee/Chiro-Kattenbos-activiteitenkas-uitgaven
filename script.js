@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("appInhoud").style.display = "block";
       foutmelding.textContent = "";
       renderTabel();
-      berekenGroepOverzicht();
     } else {
       foutmelding.textContent = "Wachtwoord is onjuist.";
     }
@@ -123,7 +122,6 @@ document.addEventListener("DOMContentLoaded", function () {
           document.getElementById("filterGroep").value,
           document.getElementById("filterBetaald").value
         );
-    
       }
     });
   });
@@ -135,12 +133,4 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("filterBetaald").addEventListener("change", function () {
     renderTabel(document.getElementById("filterGroep").value, this.value);
   });
-  }
-
-  toonInstellingenVelden();
 });
-
-
-
-
-
