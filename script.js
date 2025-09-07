@@ -1,136 +1,113 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const correctWachtwoord = "chiro2025";
-  const alleGroepen = [
-    "Ribbels", "Speelclubs", "Rakkers", "Kwiks",
-    "Tippers", "Toppers", "Aspi", "LEIDING"
-  ];
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chiro Kattenbos – Uitgavenbeheer</title>
+  <link rel="stylesheet" href="style.css" />
 
-  const groepKleuren = {
-    Ribbels: "#cce5ff",
-    Speelclubs: "#ffe5cc",
-    Rakkers: "#e5ffcc",
-    Kwiks: "#ffccf2",
-    Tippers: "#d5ccff",
-    Toppers: "#ccffd5",
-    Aspi: "#ffd5cc",
-    LEIDING: "#dddddd"
-  };
-
-  function controleerWachtwoord() {
-    const invoer = document.getElementById("wachtwoord").value;
-    const foutmelding = document.getElementById("loginFout");
-
-    if (invoer === correctWachtwoord) {
-      document.getElementById("loginScherm").style.display = "none";
-      document.getElementById("appInhoud").style.display = "block";
-      foutmelding.textContent = "";
-      renderTabel();
-    } else {
-      foutmelding.textContent = "Wachtwoord is onjuist.";
-    }
-  }
-
-  window.controleerWachtwoord = controleerWachtwoord;
-
-  function renderTabel(filterGroep = "", filterBetaald = "") {
-    const tbody = document.querySelector("#overzicht tbody");
-    tbody.innerHTML = "";
-
-    firebase.database().ref("uitgaven").once("value", snapshot => {
-      const data = snapshot.val();
-      const uitgaven = data ? Object.values(data) : [];
-
-      uitgaven
-        .filter(u => {
-          const groepMatch = !filterGroep || u.groep === filterGroep;
-          const betaaldMatch = filterBetaald === "" || String(u.betaald) === filterBetaald;
-          return groepMatch && betaaldMatch;
-        })
-        .sort((a, b) => b.nummer - a.nummer)
-        .forEach(u => {
-          const rij = tbody.insertRow();
-          rij.style.backgroundColor = groepKleuren[u.groep] || "#fff";
-          rij.insertCell(0).textContent = u.nummer;
-          rij.insertCell(1).textContent = u.groep;
-          rij.insertCell(2).textContent = `€${u.bedrag}`;
-          rij.insertCell(3).textContent = u.activiteit;
-          rij.insertCell(4).textContent = u.datum;
-          rij.insertCell(5).textContent = u.betaald ? "✅" : "❌";
-
-          const actieCel = rij.insertCell(6);
-          const knop = document.createElement("button");
-          knop.textContent = "Verwijder";
-          knop.className = "verwijder";
-          knop.onclick = () => {
-            firebase.database().ref("uitgaven/" + u.nummer).remove();
-            renderTabel(
-              document.getElementById("filterGroep").value,
-              document.getElementById("filterBetaald").value
-            );
-          };
-          actieCel.appendChild(knop);
-
-          const toggleCel = rij.insertCell(7);
-          toggleCel.className = "betaald-toggle";
-          const checkbox = document.createElement("input");
-          checkbox.type = "checkbox";
-          checkbox.checked = u.betaald;
-          checkbox.title = "Betaald aanvinken";
-          checkbox.onchange = () => {
-            firebase.database().ref("uitgaven/" + u.nummer).update({ betaald: checkbox.checked }, function (error) {
-              if (!error) {
-                renderTabel(
-                  document.getElementById("filterGroep").value,
-                  document.getElementById("filterBetaald").value
-                );
-              }
-            });
-          };
-          toggleCel.appendChild(checkbox);
-        });
-    });
-  }
-
-  document.getElementById("uitgaveForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const groep = document.getElementById("groep").value;
-    const bedrag = parseFloat(document.getElementById("bedrag").value.replace(",", "."));
-    const activiteit = document.getElementById("activiteit").value;
-    const datum = document.getElementById("datum").value;
-    const betaald = document.getElementById("betaald").checked;
-
-    if (!groep || isNaN(bedrag) || !activiteit || !datum) {
-      alert("Gelieve alle velden correct in te vullen.");
-      return;
-    }
-
-    const nummer = Date.now();
-    const nieuweUitgave = {
-      nummer,
-      groep,
-      bedrag: bedrag.toFixed(2),
-      activiteit,
-      datum,
-      betaald
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBQ7lu-1PDD28LWuW9vgHcELj2mlGzpE70",
+      authDomain: "chiroapp-c51eb.firebaseapp.com",
+      databaseURL: "https://chiroapp-c51eb-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "chiroapp-c51eb",
+      storageBucket: "chiroapp-c51eb.appspot.com",
+      messagingSenderId: "667256455082",
+      appId: "1:667256455082:web:e968feee1b636eab47b5d3"
     };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+</head>
+<body>
+  <!-- 🔐 Login -->
+  <div id="loginScherm">
+    <h2>Inloggen</h2>
+    <p>Voer het wachtwoord in om toegang te krijgen:</p>
+    <input type="password" id="wachtwoord" placeholder="Wachtwoord" />
+    <button id="loginKnop">Inloggen</button>
+    <p id="loginFout" style="color: red;"></p>
+  </div>
 
-    firebase.database().ref("uitgaven/" + nummer).set(nieuweUitgave, function (error) {
-      if (!error) {
-        document.getElementById("uitgaveForm").reset();
-        renderTabel(
-          document.getElementById("filterGroep").value,
-          document.getElementById("filterBetaald").value
-        );
-      }
-    });
-  });
+  <!-- 📋 App -->
+  <div id="appInhoud" style="display: none;">
+    <h1>Chiro Kattenbos – Uitgavenbeheer</h1>
 
-  document.getElementById("filterGroep").addEventListener("change", function () {
-    renderTabel(this.value, document.getElementById("filterBetaald").value);
-  });
+    <!-- ✅ Uitgaveformulier -->
+    <form id="uitgaveForm">
+      <label for="groep">Groep:</label>
+      <select id="groep" required>
+        <option value="">-- Kies een groep --</option>
+        <option>Ribbels</option>
+        <option>Speelclubs</option>
+        <option>Rakkers</option>
+        <option>Kwiks</option>
+        <option>Tippers</option>
+        <option>Toppers</option>
+        <option>Aspi</option>
+        <option>LEIDING</option>
+      </select>
 
-  document.getElementById("filterBetaald").addEventListener("change", function () {
-    renderTabel(document.getElementById("filterGroep").value, this.value);
-  });
-});
+      <label for="bedrag">Bedrag (€):</label>
+      <input type="text" id="bedrag" required />
+
+      <label for="activiteit">Activiteit/Omschrijving:</label>
+      <input type="text" id="activiteit" required />
+
+      <label for="datum">Datum:</label>
+      <input type="date" id="datum" required />
+
+      <label><input type="checkbox" id="betaald" /> Betaald</label>
+
+      <button type="submit">Toevoegen</button>
+    </form>
+
+    <!-- 🔍 Filters -->
+    <div class="filter">
+      <label for="filterGroep">Filter op groep:</label>
+      <select id="filterGroep">
+        <option value="">Alle groepen</option>
+        <option>Ribbels</option>
+        <option>Speelclubs</option>
+        <option>Rakkers</option>
+        <option>Kwiks</option>
+        <option>Tippers</option>
+        <option>Toppers</option>
+        <option>Aspi</option>
+        <option>LEIDING</option>
+      </select>
+    </div>
+
+    <div class="filter">
+      <label for="filterBetaald">Filter op betaald:</label>
+      <select id="filterBetaald">
+        <option value="">Alles</option>
+        <option value="true">Betaald</option>
+        <option value="false">Niet betaald</option>
+      </select>
+    </div>
+
+    <!-- 📊 Tabel -->
+    <table id="overzicht">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Groep</th>
+          <th>Bedrag</th>
+          <th>Activiteit</th>
+          <th>Datum</th>
+          <th>Betaald</th>
+          <th>Actie</th>
+          <th>Betaald aanvinken</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
