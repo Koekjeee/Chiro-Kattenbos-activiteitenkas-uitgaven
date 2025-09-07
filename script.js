@@ -215,4 +215,4 @@ document.addEventListener("DOMContentLoaded", function () {
     rows.forEach(row => {
       const groep = row.getAttribute("data-groep");
       const leden = parseInt(document.getElementById(`leden-${groep}`).value);
-      const maxPerLid = parseFloat(document.getElementBy
+      const maxPerLid = parseFloat(document.getElementById(`max
