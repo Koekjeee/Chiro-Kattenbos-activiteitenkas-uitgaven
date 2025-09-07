@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
         y += 8;
       });
 
-      doc.save("uitgaven_per_groep.pdf");
+      doc.save("uitgaven_activiteitenkas_per_groep.pdf");
     });
   }
 
@@ -205,4 +205,5 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("filterBetaald")
     .addEventListener("change", e => renderTabel(document.getElementById("filterGroep").value, e.target.value));
 });
+
 
