@@ -199,14 +199,17 @@ if (u.bonUrl) {
   }
 
 
- document.getElementById("uitgaveForm").addEventListener("submit", e => {
+  // Uitgave toevoegen
+  document.getElementById("uitgaveForm").addEventListener("submit", e => {
     e.preventDefault();
     const g = document.getElementById("groep").value;
     const b = parseFloat(document.getElementById("bedrag").value.replace(",", ".")) || 0;
     const a = document.getElementById("activiteit").value;
     const d = document.getElementById("datum").value;
     const p = document.getElementById("betaald").checked;
-    if (!g || isNaN(b) || !a || !d) return alert("Gelieve alle velden correct in te vullen.");
+    if (!g || isNaN(b) || !a || !d) {
+      return alert("Gelieve alle velden correct in te vullen.");
+    }
     const id = Date.now();
     const obj = { nummer: id, groep: g, bedrag: b.toFixed(2), activiteit: a, datum: d, betaald: p };
     firebase.database().ref("uitgaven/" + id).set(obj, err => {
@@ -218,13 +221,20 @@ if (u.bonUrl) {
         );
       }
     });
+  });  // <-- sluit hier je submit-handler af
 
+  // Filters
   document.getElementById("filterGroep")
-    .addEventListener("change", e => renderTabel(e.target.value, document.getElementById("filterBetaald").value));
+    .addEventListener("change", e =>
+      renderTabel(e.target.value, document.getElementById("filterBetaald").value)
+    );
 
   document.getElementById("filterBetaald")
-    .addEventListener("change", e => renderTabel(document.getElementById("filterGroep").value, e.target.value));
-});
+    .addEventListener("change", e =>
+      renderTabel(document.getElementById("filterGroep").value, e.target.value)
+    );
+
+});  // <-- sluit hier je DOMContentLoaded callback af
 
 
 
