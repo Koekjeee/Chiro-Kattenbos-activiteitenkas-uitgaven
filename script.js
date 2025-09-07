@@ -127,58 +127,81 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("loginKnop").addEventListener("click", controleerWachtwoord);
 
   // Existing renderTabel & event-handlers unchanged...
-  function renderTabel(filterGroep = "", filterBetaald = "") {
-    const tbody = document.querySelector("#overzicht tbody");
-    tbody.innerHTML = "";
-    firebase.database().ref("uitgaven").once("value", snap => {
-      const data = snap.val() || {};
-      Object.values(data)
-        .filter(u => {
-          const mg = !filterGroep || u.groep === filterGroep;
-          const mb = filterBetaald === "" || String(u.betaald) === filterBetaald;
-          return mg && mb;
-        })
-        .sort((a,b) => b.nummer - a.nummer)
-        .forEach(u => {
-          const r = tbody.insertRow();
-          r.style.backgroundColor = groepKleuren[u.groep] || "#fff";
-          r.insertCell(0).textContent = u.nummer;
-          r.insertCell(1).textContent = u.groep;
-          r.insertCell(2).textContent = `€${u.bedrag}`;
-          r.insertCell(3).textContent = u.activiteit;
-          r.insertCell(4).textContent = u.datum;
-          r.insertCell(5).textContent = u.betaald ? "✅" : "❌";
-          const c6 = r.insertCell(6);
-          const btn = document.createElement("button");
-          btn.className = "verwijder";
-          btn.textContent = "Verwijder";
-          btn.onclick = () => {
-            firebase.database().ref("uitgaven/"+u.nummer).remove();
-            renderTabel(
-              document.getElementById("filterGroep").value,
-              document.getElementById("filterBetaald").value
-            );
-          };
-          c6.appendChild(btn);
-          const c7 = r.insertCell(7);
-          c7.className = "betaald-toggle";
-          const cb = document.createElement("input");
-          cb.type = "checkbox";
-          cb.checked = u.betaald;
-          cb.onchange = () => {
-            firebase.database().ref("uitgaven/"+u.nummer)
-              .update({betaald: cb.checked}, err => {
-                if (!err) renderTabel(
-                  document.getElementById("filterGroep").value,
-                  document.getElementById("filterBetaald").value
-                );
-              });
-          };
-          c7.appendChild(cb);
-        });
-    });
-  }
+ function renderSamenvatting() {
+  const tbody = document.getElementById("summaryBody");
+  tbody.innerHTML = "";
+  const settings = loadSettings();
+  const totals = {};
+  alleGroepen.forEach(g => (totals[g] = 0));
 
+  firebase.database().ref("uitgaven").once("value", snapshot => {
+    const data = snapshot.val() || {};
+    Object.values(data).forEach(u => {
+      totals[u.groep] += parseFloat(u.bedrag);
+    });
+
+    alleGroepen.forEach(groep => {
+      const row = document.createElement("tr");
+      row.style.backgroundColor = groepKleuren[groep] || "#fff";
+
+      const leden = settings[groep]?.leden || "";
+      const perLid = settings[groep]?.perLid || "";
+
+      const totaalBudget = leden && perLid
+        ? (parseFloat(leden) * parseFloat(perLid))
+        : 0;
+      const uitgaven = totals[groep];
+      const beschikbaar = totaalBudget - uitgaven;
+
+      const tdGroep = document.createElement("td");
+      tdGroep.textContent = groep;
+      row.appendChild(tdGroep);
+
+      const tdLeden = document.createElement("td");
+      const inpLeden = document.createElement("input");
+      inpLeden.type = "number";
+      inpLeden.min = 0;
+      inpLeden.value = leden;
+      inpLeden.addEventListener("change", () => {
+        settings[groep] = settings[groep] || {};
+        settings[groep].leden = inpLeden.value;
+        saveSettings(settings);
+        renderSamenvatting();
+      });
+      tdLeden.appendChild(inpLeden);
+      row.appendChild(tdLeden);
+
+      const tdPerLid = document.createElement("td");
+      const inpPerLid = document.createElement("input");
+      inpPerLid.type = "number";
+      inpPerLid.min = 0;
+      inpPerLid.step = "0.01";
+      inpPerLid.value = perLid;
+      inpPerLid.addEventListener("change", () => {
+        settings[groep] = settings[groep] || {};
+        settings[groep].perLid = inpPerLid.value;
+        saveSettings(settings);
+        renderSamenvatting();
+      });
+      tdPerLid.appendChild(inpPerLid);
+      row.appendChild(tdPerLid);
+
+      const tdTotaal = document.createElement("td");
+      tdTotaal.textContent = `€${totaalBudget.toFixed(2)}`;
+      row.appendChild(tdTotaal);
+
+      const tdUitgaven = document.createElement("td");
+      tdUitgaven.textContent = `€${uitgaven.toFixed(2)}`;
+      row.appendChild(tdUitgaven);
+
+      const tdBeschikbaar = document.createElement("td");
+      tdBeschikbaar.textContent = `€${beschikbaar.toFixed(2)}`;
+      row.appendChild(tdBeschikbaar);
+
+      tbody.appendChild(row);
+    });
+  });
+}
   document.getElementById("uitgaveForm").addEventListener("submit", e => {
     e.preventDefault();
     const g = document.getElementById("groep").value;
@@ -205,3 +228,4 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("filterBetaald")
     .addEventListener("change", e => renderTabel(document.getElementById("filterGroep").value, e.target.value));
 });
+
