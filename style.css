@@ -77,11 +77,11 @@ th {
   overflow: hidden;
 }
 .groepTabel th, .groepTabel td {
-  padding: 6px 10px;
-  border-bottom: 1px solid #eee;
-  text-align: left;
+  padding: 4px 8px;
+  font-size: 0.85em;
 }
 .groepHeader {
   background-color: #007bff;
   color: white;
 }
+
