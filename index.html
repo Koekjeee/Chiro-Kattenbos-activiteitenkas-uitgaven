@@ -25,6 +25,7 @@
 <body>
   <!-- 🔐 Login -->
   <div id="loginScherm">
+    <img src="logo.png" alt="Chiro Kattenbos Logo" id="loginLogo" />
     <h2>Inloggen</h2>
     <p>Voer het wachtwoord in om toegang te krijgen:</p>
     <input type="password" id="wachtwoord" placeholder="Wachtwoord" />
@@ -42,7 +43,19 @@
         ▸ Toon uitgaven per groep
       </button>
       <div id="summaryContent">
-        <ul id="groepSamenvatting"></ul>
+        <table id="summaryTable">
+          <thead>
+            <tr>
+              <th>Groep</th>
+              <th>Leden</th>
+              <th>Budget / lid (€)</th>
+              <th>Totaal budget (€)</th>
+              <th>Uitgaven (€)</th>
+              <th>Beschikbaar (€)</th>
+            </tr>
+          </thead>
+          <tbody id="summaryBody"></tbody>
+        </table>
       </div>
     </div>
 
