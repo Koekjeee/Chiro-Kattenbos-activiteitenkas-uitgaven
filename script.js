@@ -215,10 +215,6 @@ function toonInstellingenVelden() {
 }
 
 toonInstellingenVelden();
-    overzichtDiv.appendChild(tabel);
-  });
-});
 }); // ✅ correct afgesloten
-
 
 
