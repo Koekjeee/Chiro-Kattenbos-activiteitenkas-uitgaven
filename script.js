@@ -53,10 +53,8 @@ document.addEventListener("DOMContentLoaded", function () {
           knop.textContent = "Verwijder";
           knop.className = "verwijder";
           knop.onclick = () => {
-            if (confirm(`Weet je zeker dat je uitgave wilt verwijderen?`)) {
-              firebase.database().ref("uitgaven/" + u.nummer).remove();
-              renderTabel(document.getElementById("filterGroep").value);
-            }
+            firebase.database().ref("uitgaven/" + u.nummer).remove();
+            renderTabel(document.getElementById("filterGroep").value);
           };
           actieCel.appendChild(knop);
         });
@@ -86,9 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     firebase.database().ref("uitgaven/" + nieuweUitgave.nummer).set(nieuweUitgave, function (error) {
-      if (error) {
-        alert("Fout bij opslaan: " + error.message);
-      } else {
+      if (!error) {
         document.getElementById("uitgaveForm").reset();
         renderTabel(document.getElementById("filterGroep").value);
       }
@@ -105,8 +101,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const overzichtDiv = document.getElementById("groepOverzicht");
     const instellingenDiv = document.getElementById("instellingenVelden");
 
-    if (!overzichtDiv || !instellingenDiv) return;
-
     if (overzichtZichtbaar) {
       overzichtDiv.innerHTML = "";
       instellingenDiv.innerHTML = "";
@@ -122,12 +116,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const instellingenData = instellingenSnap.val() || {};
 
       const totaalPerGroep = {};
-
       Object.values(uitgavenData).forEach(u => {
         const bedrag = parseFloat(u.bedrag);
-        if (!totaalPerGroep[u.groep]) {
-          totaalPerGroep[u.groep] = 0;
-        }
+        if (!totaalPerGroep[u.groep]) totaalPerGroep[u.groep] = 0;
         totaalPerGroep[u.groep] += bedrag;
       });
 
@@ -136,14 +127,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const huidige = instellingenData[groep] || { leden: "", maxPerLid: "" };
 
         const container = document.createElement("div");
-        container.style.marginBottom = "10px";
-
         container.innerHTML = `
           <strong>${groep}</strong><br>
           Aantal leden: <input type="number" min="1" id="leden-${groep}" value="${huidige.leden}" style="width:60px">
           Max €/lid: <input type="number" min="0" step="0.01" id="max-${groep}" value="${huidige.maxPerLid}" style="width:80px">
         `;
-
         instellingenDiv.appendChild(container);
 
         ["leden", "max"].forEach(type => {
@@ -181,14 +169,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
       overzichtDiv.appendChild(tabel);
       overzichtZichtbaar = true;
-
       updateOverzicht();
     });
   });
 
   function updateOverzicht() {
     const rows = document.querySelectorAll(".groepTabel tr[data-groep]");
-
     rows.forEach(row => {
       const groep = row.getAttribute("data-groep");
       const leden = parseInt(document.getElementById(`leden-${groep}`).value);
@@ -206,4 +192,16 @@ document.addEventListener("DOMContentLoaded", function () {
           totaalCell.style.fontWeight = "bold";
         } else if (totaal >= maxToegestaan * 0.9) {
           totaalCell.style.color = "orange";
-          totaal
+          totaalCell.style.fontWeight = "bold";
+        } else {
+          totaalCell.style.color = "black";
+          totaalCell.style.fontWeight = "normal";
+        }
+      } else {
+        maxCell.textContent = "-";
+        totaalCell.style.color = "black";
+        totaalCell.style.fontWeight = "normal";
+      }
+    });
+  }
+});
