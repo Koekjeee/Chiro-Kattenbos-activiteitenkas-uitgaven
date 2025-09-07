@@ -52,17 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
           rij.insertCell(3).textContent = u.activiteit;
           rij.insertCell(4).textContent = u.datum;
           rij.insertCell(5).textContent = u.betaald ? "✅" : "❌";
-
-          const bonCel = rij.insertCell(6);
-          if (u.bonURL) {
-            const link = document.createElement("a");
-            link.href = u.bonURL;
-            link.target = "_blank";
-            link.textContent = "📎 Bonnetje";
-            bonCel.appendChild(link);
-          } else {
-            bonCel.textContent = "-";
-          }
+          rij.insertCell(6).textContent = "-";
 
           const actieCel = rij.insertCell(7);
           const knop = document.createElement("button");
@@ -85,7 +75,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const activiteit = document.getElementById("activiteit").value;
     const datum = document.getElementById("datum").value;
     const betaald = document.getElementById("betaald").checked;
-    const bonFile = document.getElementById("bonnetje").files[0];
 
     if (!groep || isNaN(bedrag) || !activiteit || !datum) {
       alert("Gelieve alle velden correct in te vullen.");
@@ -99,28 +88,15 @@ document.addEventListener("DOMContentLoaded", function () {
       bedrag: bedrag.toFixed(2),
       activiteit,
       datum,
-      betaald,
-      bonURL: ""
+      betaald
     };
 
-    function opslaanMetBon(url = "") {
-      nieuweUitgave.bonURL = url;
-      firebase.database().ref("uitgaven/" + nummer).set(nieuweUitgave, function (error) {
-        if (!error) {
-          document.getElementById("uitgaveForm").reset();
-          renderTabel(document.getElementById("filterGroep").value);
-        }
-      });
-    }
-
-    if (bonFile) {
-      const storageRef = firebase.storage().ref("bonnetjes/" + nummer);
-      storageRef.put(bonFile).then(snapshot => {
-        snapshot.ref.getDownloadURL().then(opslaanMetBon);
-      });
-    } else {
-      opslaanMetBon();
-    }
+    firebase.database().ref("uitgaven/" + nummer).set(nieuweUitgave, function (error) {
+      if (!error) {
+        document.getElementById("uitgaveForm").reset();
+        renderTabel(document.getElementById("filterGroep").value);
+      }
+    });
   });
 
   document.getElementById("filterGroep").addEventListener("change", function () {
@@ -211,4 +187,22 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   function updateOverzicht() {
-    const rows = document.query
+    const rows = document.querySelectorAll(".groepTabel tr[data-groep]");
+    rows.forEach(row => {
+      const groep = row.getAttribute("data-groep");
+      const leden = parseInt(document.getElementById(`leden-${groep}`).value);
+      const maxPerLid = parseFloat(document.getElementById(`max-${groep}`).value);
+      const totaalCell = row.cells[1];
+      const maxCell = row.cells[2];
+
+      if (!isNaN(leden) && !isNaN(maxPerLid)) {
+        const maxToegestaan = leden * maxPerLid;
+        const totaal = parseFloat(totaalCell.textContent.replace("€", ""));
+        maxCell.textContent = `€${maxToegestaan.toFixed(2)}`;
+
+        if (totaal >= maxToegestaan) {
+          totaalCell.style.color = "red";
+        } else if (totaal >= maxToegestaan * 0.75) {
+          totaalCell.style.color = "orange";
+        } else {
+          totaalCell
