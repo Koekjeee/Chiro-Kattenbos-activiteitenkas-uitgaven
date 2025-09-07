@@ -139,6 +139,7 @@ td.betaald-toggle input[type="checkbox"] {
 
 #summaryContent li {
   padding: 6px 10px;
+  background-clip: padding-box;
   display: flex;
   justify-content: space-between;
   border-radius: 4px;
@@ -150,4 +151,5 @@ td.betaald-toggle input[type="checkbox"] {
 }
   font-weight: 500;
 }
+
 
