@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chiro Kattenbos – Uitgavenbeheer</title>
+  <title>Chiro Kattenbos – Uitgavenbeheer - Activiteitenkas</title>
   <link rel="stylesheet" href="style.css" />
 
   <!-- Firebase SDK -->
@@ -36,6 +36,19 @@
   <div id="appInhoud" style="display: none;">
     <h1>Chiro Kattenbos – Uitgavenbeheer</h1>
 
+    <!-- PDF-export knop (rechtsboven) -->
+    <button id="exportPdfBtn" class="pdf-export-btn" title="Exporteer uitgaven als PDF">📄</button>
+
+    <!-- 📈 Samenvatting per groep -->
+    <div id="summaryPanel">
+      <button id="toggleSummary" class="highlight-btn">
+        ▸ Toon uitgaven per groep
+      </button>
+      <div id="summaryContent">
+        <ul id="groepSamenvatting"></ul>
+      </div>
+    </div>
+
     <!-- ✅ Uitgaveformulier -->
     <form id="uitgaveForm">
       <label for="groep">Groep:</label>
@@ -60,8 +73,8 @@
       <label for="datum">Datum:</label>
       <input type="date" id="datum" required />
 
+      
       <label><input type="checkbox" id="betaald" /> Betaald</label>
-
       <button type="submit">Toevoegen</button>
     </form>
 
@@ -108,6 +121,13 @@
     </table>
   </div>
 
+  <!-- jsPDF voor PDF-export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-storage-compat.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
+
+
+
+
