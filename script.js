@@ -180,42 +180,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     berekenGroepOverzicht();
   }
-
-  function berekenGroepOverzicht() {
-    const tbody = document.querySelector("#groepTabel tbody");
-    tbody.innerHTML = "";
-
-    firebase.database().ref("instellingen").once("value", instellingenSnap => {
-      const instellingen = instellingenSnap.val() || {};
-
-      firebase.database().ref("uitgaven").once("value", uitgavenSnap => {
-        const uitgaven = Object.values(uitgavenSnap.val() || {});
-        alleGroepen.forEach(groep => {
-          const groepUitgaven = uitgaven.filter(u => u.groep === groep);
-          const totaal = groepUitgaven.reduce((sum, u) => sum + parseFloat(u.bedrag), 0);
-          const inst = instellingen[groep];
-          const max = inst ? inst.leden * inst.maxbedrag : 0;
-
-          const rij = tbody.insertRow();
-          rij.style.backgroundColor = groepKleuren[groep] || "#fff";
-          rij.insertCell(0).textContent = groep;
-          rij.insertCell(1).textContent = `€${totaal.toFixed(2)}`;
-          rij.insertCell(2).textContent = `€${max.toFixed(2)}`;
-
-          const cel = rij.cells[1];
-          if (max === 0) {
-            cel.style.color = "#333";
-          } else if (totaal >= max) {
-            cel.style.color = "#dc3545";
-          } else if (totaal >= max * 0.8) {
-            cel.style.color = "#fd7e14";
-          } else {
-            cel.style.color = "#28a745";
-          }
-        });
       });
     });
   }
 
   toonInstellingenVelden();
 });
+
