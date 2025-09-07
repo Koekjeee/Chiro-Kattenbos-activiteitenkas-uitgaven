@@ -214,5 +214,4 @@ document.addEventListener("DOMContentLoaded", function () {
     const rows = document.querySelectorAll(".groepTabel tr[data-groep]");
     rows.forEach(row => {
       const groep = row.getAttribute("data-groep");
-      const leden = parseInt(document.getElementById(`leden-${groep}`).value);
-      const maxPerLid = parseFloat(document.getElementById
+      const leden = parseInt(document.get
