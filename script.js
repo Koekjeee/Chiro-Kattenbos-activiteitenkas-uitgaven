@@ -125,30 +125,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
-
-
-  function setupNotitieblok() {
-  const toggleBtn = document.getElementById("toggleNotities");
-  const content   = document.getElementById("notitieContent");
-  const veld      = document.getElementById("notitieveld");
-  const opslaan   = document.getElementById("opslaanNotities");
-
-  // Laad opgeslagen notities
-  veld.value = localStorage.getItem("notities") || "";
-
-  toggleBtn.addEventListener("click", () => {
-    const open = content.style.display === "block";
-    content.style.display = open ? "none" : "block";
-    toggleBtn.textContent = (open ? "▸" : "▾") + " Toon notitieblok";
-  });
-
-  opslaan.addEventListener("click", () => {
-    localStorage.setItem("notities", veld.value);
-    opslaan.textContent = "✅ Opgeslagen";
-    setTimeout(() => opslaan.textContent = "💾 Opslaan", 1500);
-  });
-}
-
   
   document.getElementById("filterGroep").addEventListener("change", function () {
     renderTabel(this.value, document.getElementById("filterBetaald").value);
@@ -158,4 +134,5 @@ document.addEventListener("DOMContentLoaded", function () {
     renderTabel(document.getElementById("filterGroep").value, this.value);
   });
 });
+
 
