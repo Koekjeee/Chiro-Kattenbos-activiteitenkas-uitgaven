@@ -17,6 +17,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
   window.controleerWachtwoord = controleerWachtwoord;
 
+  const groepKleuren = {
+    Ribbels: "#cce5ff",
+    Speelclubs: "#ffe5cc",
+    Rakkers: "#e5ffcc",
+    Kwiks: "#ffccf2",
+    Tippers: "#d5ccff",
+    Toppers: "#ccffd5",
+    Aspi: "#ffd5cc",
+    LEIDING: "#dddddd"
+  };
+
   function renderTabel(filter = "") {
     const tbody = document.querySelector("#overzicht tbody");
     tbody.innerHTML = "";
@@ -30,6 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .sort((a, b) => b.nummer - a.nummer)
         .forEach(u => {
           const rij = tbody.insertRow();
+          rij.style.backgroundColor = groepKleuren[u.groep] || "#fff";
           rij.insertCell(0).textContent = u.nummer;
           rij.insertCell(1).textContent = u.groep;
           rij.insertCell(2).textContent = `€${u.bedrag}`;
@@ -96,21 +108,4 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     Promise.all([
-      firebase.database().ref("uitgaven").once("value"),
-      firebase.database().ref("instellingen").once("value")
-    ]).then(([uitgavenSnap, instellingenSnap]) => {
-      const uitgavenData = uitgavenSnap.val() || {};
-      const instellingenData = instellingenSnap.val() || {};
-      const totaalPerGroep = {};
-
-      Object.values(uitgavenData).forEach(u => {
-        const bedrag = parseFloat(u.bedrag);
-        if (!totaalPerGroep[u.groep]) totaalPerGroep[u.groep] = 0;
-        totaalPerGroep[u.groep] += bedrag;
-      });
-
-      instellingenDiv.innerHTML = "";
-      Object.keys(totaalPerGroep).forEach(groep => {
-        const huidige = instellingenData[groep] || { leden: "", maxPerLid: "" };
-
-       
+      firebase
