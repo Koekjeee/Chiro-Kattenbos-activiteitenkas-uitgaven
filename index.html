@@ -34,15 +34,17 @@
 
   <!-- 📋 App -->
   <div id="appInhoud" style="display: none;">
-    <!-- 📈 Samenvatting per groep -->
+    <h1>Chiro Kattenbos – Uitgavenbeheer</h1>
+
+    <!-- 📈 Samenvatting per groep (onder de titel) -->
     <div id="summaryPanel">
-      <button id="toggleSummary" class="highlight-btn">▸ Toon uitgaven per groep</button>
+      <button id="toggleSummary" class="highlight-btn">
+        ▸ Toon uitgaven per groep
+      </button>
       <div id="summaryContent">
         <ul id="groepSamenvatting"></ul>
       </div>
     </div>
-
-    <h1>Chiro Kattenbos – Uitgavenbeheer</h1>
 
     <!-- ✅ Uitgaveformulier -->
     <form id="uitgaveForm">
@@ -69,7 +71,6 @@
       <input type="date" id="datum" required />
 
       <label><input type="checkbox" id="betaald" /> Betaald</label>
-
       <button type="submit">Toevoegen</button>
     </form>
 
