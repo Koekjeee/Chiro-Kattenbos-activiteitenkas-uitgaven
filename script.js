@@ -1,3 +1,16 @@
+const correctWachtwoord = "chiro2025";
+
+function controleerWachtwoord() {
+  const invoer = document.getElementById("wachtwoord").value;
+  if (invoer === correctWachtwoord) {
+    document.getElementById("loginScherm").style.display = "none";
+    document.getElementById("appInhoud").style.display = "block";
+    renderTabel();
+  } else {
+    document.getElementById("loginFout").textContent = "Wachtwoord is onjuist.";
+  }
+}
+
 const groepKleuren = {
   Ribbels: "#cce5ff",
   Speelclubs: "#ffe5cc",
@@ -9,7 +22,6 @@ const groepKleuren = {
   LEIDING: "#dddddd"
 };
 
-// Uitgaven ophalen en weergeven
 function renderTabel(filter = "") {
   const tbody = document.querySelector("#overzicht tbody");
   tbody.innerHTML = "";
@@ -45,43 +57,9 @@ function renderTabel(filter = "") {
   });
 }
 
-// Uitgave toevoegen
 document.getElementById("uitgaveForm").addEventListener("submit", function(e) {
   e.preventDefault();
 
   const groep = document.getElementById("groep").value.trim();
   const rawBedrag = document.getElementById("bedrag").value.trim().replace(",", ".");
-  const bedrag = parseFloat(rawBedrag);
-  const activiteit = document.getElementById("activiteit").value.trim();
-  const datum = document.getElementById("datum").value;
-
-  if (!groep || isNaN(bedrag) || bedrag <= 0 || !activiteit || !datum) {
-    alert("Gelieve alle velden correct in te vullen.");
-    return;
-  }
-
-  const nieuweUitgave = {
-    nummer: Date.now(),
-    groep,
-    bedrag: bedrag.toFixed(2),
-    activiteit,
-    datum
-  };
-
-  firebase.database().ref("uitgaven/" + nieuweUitgave.nummer).set(nieuweUitgave, function(error) {
-    if (error) {
-      alert("Fout bij opslaan: " + error.message);
-    } else {
-      document.getElementById("uitgaveForm").reset();
-      renderTabel(document.getElementById("filterGroep").value);
-    }
-  });
-});
-
-// Filter op groep
-document.getElementById("filterGroep").addEventListener("change", function() {
-  renderTabel(this.value);
-});
-
-// Initiale weergave
-renderTabel();
+  const bedrag
