@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // 🔐 Wachtwoordbeveiliging
   const correctWachtwoord = "chiro2025";
 
   function controleerWachtwoord() {
@@ -16,10 +15,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // 🔧 Maak de functie beschikbaar voor HTML onclick
   window.controleerWachtwoord = controleerWachtwoord;
 
-  // 🎨 Kleuren per groep
   const groepKleuren = {
     Ribbels: "#cce5ff",
     Speelclubs: "#ffe5cc",
@@ -31,7 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
     LEIDING: "#dddddd"
   };
 
-  // 📋 Tabel opbouwen
   function renderTabel(filter = "") {
     const tbody = document.querySelector("#overzicht tbody");
     tbody.innerHTML = "";
@@ -59,49 +55,4 @@ document.addEventListener("DOMContentLoaded", function () {
           knop.onclick = () => {
             if (confirm(`Weet je zeker dat je uitgave wilt verwijderen?`)) {
               firebase.database().ref("uitgaven/" + u.nummer).remove();
-              renderTabel(document.getElementById("filterGroep").value);
-            }
-          };
-          actieCel.appendChild(knop);
-        });
-    });
-  }
-
-  // ➕ Uitgave toevoegen
-  document.getElementById("uitgaveForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const groep = document.getElementById("groep").value.trim();
-    const rawBedrag = document.getElementById("bedrag").value.trim().replace(",", ".");
-    const bedrag = parseFloat(rawBedrag);
-    const activiteit = document.getElementById("activiteit").value.trim();
-    const datum = document.getElementById("datum").value;
-
-    if (!groep || isNaN(bedrag) || bedrag <= 0 || !activiteit || !datum) {
-      alert("Gelieve alle velden correct in te vullen.");
-      return;
-    }
-
-    const nieuweUitgave = {
-      nummer: Date.now(),
-      groep,
-      bedrag: bedrag.toFixed(2),
-      activiteit,
-      datum
-    };
-
-    firebase.database().ref("uitgaven/" + nieuweUitgave.nummer).set(nieuweUitgave, function (error) {
-      if (error) {
-        alert("Fout bij opslaan: " + error.message);
-      } else {
-        document.getElementById("uitgaveForm").reset();
-        renderTabel(document.getElementById("filterGroep").value);
-      }
-    });
-  });
-
-  // 🔍 Filter op groep
-  document.getElementById("filterGroep").addEventListener("change", function () {
-    renderTabel(this.value);
-  });
-});
+              renderTabel(document.getElementById("filter
