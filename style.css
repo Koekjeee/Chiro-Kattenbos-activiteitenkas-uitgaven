@@ -85,12 +85,6 @@ th {
   background-color: #c82333;
 }
 
-/* ✅ Betaald status */
-td:has(.betaald-icon) {
-  font-size: 1.2em;
-}
-
-/* 🧾 Betaald checkbox in tabel */
 td.betaald-toggle {
   text-align: center;
 }
@@ -100,8 +94,11 @@ td.betaald-toggle input[type="checkbox"] {
   margin: 0;
 }
 
-/* 📎 Bonnetje link — verwijderd */
-.bon-link {
-  display: none;
+#groepTabel th {
+  background-color: #343a40;
+  color: white;
 }
 
+#groepTabel td {
+  font-weight: bold;
+}
