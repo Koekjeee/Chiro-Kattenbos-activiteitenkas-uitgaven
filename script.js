@@ -114,4 +114,25 @@ document.addEventListener("DOMContentLoaded", function () {
         totaalPerGroep[u.groep] += bedrag;
       });
 
-      const overzichtDiv = document
+      const overzichtDiv = document.getElementById("groepOverzicht");
+      overzichtDiv.innerHTML = "<h3>Overzicht per groep</h3>";
+
+      const tabel = document.createElement("table");
+      tabel.style.width = "100%";
+      tabel.style.borderCollapse = "collapse";
+
+      const header = tabel.insertRow();
+      header.innerHTML = "<th>Groep</th><th>Totaal (€)</th>";
+      header.style.backgroundColor = "#007bff";
+      header.style.color = "white";
+
+      Object.entries(totaalPerGroep).forEach(([groep, totaal]) => {
+        const rij = tabel.insertRow();
+        rij.insertCell(0).textContent = groep;
+        rij.insertCell(1).textContent = `€${totaal.toFixed(2)}`;
+      });
+
+      overzichtDiv.appendChild(tabel);
+    });
+  });
+}); // ← DIT is de ontbrekende sluiting van je script!
