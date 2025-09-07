@@ -9,6 +9,7 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-storage-compat.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBQ7lu-1PDD28LWuW9vgHcELj2mlGzpE70",
@@ -69,6 +70,13 @@
       <label for="datum">Datum:</label>
       <input type="date" id="datum" required>
 
+      <label>
+        <input type="checkbox" id="betaald"> Betaald
+      </label>
+
+      <label for="bonnetje">Bonnetje:</label>
+      <input type="file" id="bonnetje" accept="image/*">
+
       <button type="submit">Toevoegen</button>
     </form>
 
@@ -95,6 +103,8 @@
           <th>Bedrag</th>
           <th>Activiteit</th>
           <th>Datum</th>
+          <th>Betaald</th>
+          <th>Bonnetje</th>
           <th>Actie</th>
         </tr>
       </thead>
