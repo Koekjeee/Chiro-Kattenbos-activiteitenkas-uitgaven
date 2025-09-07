@@ -135,4 +135,4 @@ document.addEventListener("DOMContentLoaded", function () {
       overzichtDiv.appendChild(tabel);
     });
   });
-}); // ✅ Dit is de correcte afsluiting van je script
+}); // ← sluit de DOMContentLoaded correct af!
