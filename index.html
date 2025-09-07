@@ -23,14 +23,16 @@
   </script>
 </head>
 <body>
+  <!-- 🔐 Login -->
   <div id="loginScherm">
     <h2>Inloggen</h2>
     <p>Voer het wachtwoord in om toegang te krijgen:</p>
     <input type="password" id="wachtwoord" placeholder="Wachtwoord" />
-   <button onclick="controleerWachtwoord()">Inloggen</button>
+    <button onclick="controleerWachtwoord()">Inloggen</button>
     <p id="loginFout" style="color: red;"></p>
   </div>
 
+  <!-- 📋 App -->
   <div id="appInhoud" style="display: none;">
     <h1>Chiro Kattenbos – Uitgavenbeheer</h1>
     <button id="toonOverzicht">Toon overzicht per groep</button>
@@ -70,6 +72,7 @@
       <button type="submit">Toevoegen</button>
     </form>
 
+    <!-- 🔍 Filters -->
     <div class="filter">
       <label for="filterGroep">Filter op groep:</label>
       <select id="filterGroep">
@@ -94,6 +97,7 @@
       </select>
     </div>
 
+    <!-- 📊 Tabel -->
     <table id="overzicht">
       <thead>
         <tr>
@@ -104,7 +108,7 @@
           <th>Datum</th>
           <th>Betaald</th>
           <th>Actie</th>
-          <th>Betaald aanvinken</th> <!-- ✅ nieuw -->
+          <th>Betaald aanvinken</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -114,4 +118,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
