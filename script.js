@@ -1,6 +1,3 @@
-let uitgaven = JSON.parse(localStorage.getItem("uitgaven")) || [];
-let nummer = uitgaven.length ? Math.max(...uitgaven.map(u => u.nummer)) + 1 : 1;
-
 const groepKleuren = {
   Ribbels: "#cce5ff",
   Speelclubs: "#ffe5cc",
@@ -22,6 +19,7 @@ function renderTabel(filter = "") {
 
     uitgaven
       .filter(u => !filter || u.groep === filter)
+      .sort((a, b) => b.nummer - a.nummer)
       .forEach(u => {
         const rij = tbody.insertRow();
         rij.style.backgroundColor = groepKleuren[u.groep] || "#fff";
@@ -46,12 +44,6 @@ function renderTabel(filter = "") {
   });
 }
 
-function verwijderUitgave(nr) {
-  uitgaven = uitgaven.filter(u => u.nummer !== nr);
-  localStorage.setItem("uitgaven", JSON.stringify(uitgaven));
-  renderTabel(document.getElementById("filterGroep").value);
-}
-
 document.getElementById("uitgaveForm").addEventListener("submit", function(e) {
   e.preventDefault();
 
@@ -66,20 +58,17 @@ document.getElementById("uitgaveForm").addEventListener("submit", function(e) {
     return;
   }
 
-const nieuweUitgave = {
-  nummer: Date.now(), // unieke ID
-  groep,
-  bedrag: bedrag.toFixed(2),
-  activiteit,
-  datum
-};
+  const nieuweUitgave = {
+    nummer: Date.now(),
+    groep,
+    bedrag: bedrag.toFixed(2),
+    activiteit,
+    datum
+  };
 
-db.ref("uitgaven/" + nieuweUitgave.nummer).set(nieuweUitgave);
-
-  uitgaven.push(nieuweUitgave);
-  localStorage.setItem("uitgaven", JSON.stringify(uitgaven));
-  renderTabel(document.getElementById("filterGroep").value);
+  db.ref("uitgaven/" + nieuweUitgave.nummer).set(nieuweUitgave);
   document.getElementById("uitgaveForm").reset();
+  renderTabel(document.getElementById("filterGroep").value);
 });
 
 document.getElementById("filterGroep").addEventListener("change", function() {
@@ -87,4 +76,3 @@ document.getElementById("filterGroep").addEventListener("change", function() {
 });
 
 renderTabel();
-
