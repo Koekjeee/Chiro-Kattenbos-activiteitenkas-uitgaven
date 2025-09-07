@@ -178,7 +178,6 @@ document.addEventListener("DOMContentLoaded", function () {
         firebase.database().ref("instellingen/" + groep).set({ leden, maxbedrag });
       }
     });
-    berekenGroepOverzicht();
   }
       });
     });
@@ -186,4 +185,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
   toonInstellingenVelden();
 });
+
 
