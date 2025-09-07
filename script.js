@@ -50,19 +50,20 @@ document.getElementById("uitgaveForm").addEventListener("submit", function(e) {
   e.preventDefault();
 
   const groep = document.getElementById("groep").value;
-  const bedrag = document.getElementById("bedrag").value;
+  const rawBedrag = document.getElementById("bedrag").value.trim();
+  const bedrag = parseFloat(rawBedrag.replace(",", "."));
   const activiteit = document.getElementById("activiteit").value;
   const datum = document.getElementById("datum").value;
 
-  if (!groep || !bedrag || !activiteit || !datum) {
-    alert("Gelieve alle velden in te vullen.");
+  if (!groep || isNaN(bedrag) || bedrag <= 0 || !activiteit || !datum) {
+    alert("Gelieve alle velden correct in te vullen.");
     return;
   }
 
   const nieuweUitgave = {
     nummer: nummer++,
     groep,
-    bedrag,
+    bedrag: bedrag.toFixed(2),
     activiteit,
     datum
   };
@@ -78,3 +79,4 @@ document.getElementById("filterGroep").addEventListener("change", function() {
 });
 
 renderTabel();
+
