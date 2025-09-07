@@ -175,3 +175,12 @@ td.betaald-toggle input[type="checkbox"] {
   font-weight: 500;
   color: #333;
 }
+
+.thumbnail {
+  max-width: 60px;
+  max-height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 8px;
+  cursor: pointer;
+}
