@@ -97,6 +97,8 @@ document.addEventListener("DOMContentLoaded", function () {
   let overzichtZichtbaar = false;
 
   document.getElementById("toonOverzicht").addEventListener("click", function () {
+    if (document.getElementById("appInhoud").style.display !== "block") return;
+
     const overzichtDiv = document.getElementById("groepOverzicht");
     const instellingenDiv = document.getElementById("instellingenVelden");
 
@@ -109,98 +111,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
     Promise.all([
       firebase.database().ref("uitgaven").once("value"),
-      firebase.database().ref("instellingen").once("value")
-    ]).then(([uitgavenSnap, instellingenSnap]) => {
-      const uitgavenData = uitgavenSnap.val() || {};
-      const instellingenData = instellingenSnap.val() || {};
-      const totaalPerGroep = {};
-
-      Object.values(uitgavenData).forEach(u => {
-        const bedrag = parseFloat(u.bedrag);
-        if (!totaalPerGroep[u.groep]) totaalPerGroep[u.groep] = 0;
-        totaalPerGroep[u.groep] += bedrag;
-      });
-
-      instellingenDiv.innerHTML = "";
-      Object.keys(totaalPerGroep).forEach(groep => {
-        const huidige = instellingenData[groep] || { leden: "", maxPerLid: "" };
-
-        const container = document.createElement("div");
-        container.innerHTML = `
-          <strong>${groep}</strong><br>
-          Aantal leden: <input type="number" min="1" id="leden-${groep}" value="${huidige.leden}" style="width:60px">
-          Max €/lid: <input type="number" min="0" step="0.01" id="max-${groep}" value="${huidige.maxPerLid}" style="width:80px">
-        `;
-        instellingenDiv.appendChild(container);
-
-        ["leden", "max"].forEach(type => {
-          const input = document.getElementById(`${type}-${groep}`);
-          input.addEventListener("input", () => {
-            const leden = parseInt(document.getElementById(`leden-${groep}`).value);
-            const maxPerLid = parseFloat(document.getElementById(`max-${groep}`).value);
-
-            firebase.database().ref("instellingen/" + groep).set({
-              leden: isNaN(leden) ? 0 : leden,
-              maxPerLid: isNaN(maxPerLid) ? 0 : maxPerLid
-            });
-
-            updateOverzicht();
-          });
-        });
-      });
-
-      overzichtDiv.innerHTML = "<h3>Overzicht per groep</h3>";
-      const tabel = document.createElement("table");
-      tabel.className = "groepTabel";
-
-      const header = tabel.insertRow();
-      header.innerHTML = "<th>Groep</th><th>Totaal (€)</th><th>Max toegestaan</th>";
-      header.className = "groepHeader";
-
-      Object.entries(totaalPerGroep).forEach(([groep, totaal]) => {
-        const rij = tabel.insertRow();
-        rij.style.backgroundColor = groepKleuren[groep] || "#f9f9f9";
-        rij.setAttribute("data-groep", groep);
-        rij.insertCell(0).textContent = groep;
-        rij.insertCell(1).textContent = `€${totaal.toFixed(2)}`;
-        rij.insertCell(2).textContent = "-";
-      });
-
-      overzichtDiv.appendChild(tabel);
-      overzichtZichtbaar = true;
-      updateOverzicht();
-    });
-  });
-
-  function updateOverzicht() {
-    const rows = document.querySelectorAll(".groepTabel tr[data-groep]");
-    rows.forEach(row => {
-      const groep = row.getAttribute("data-groep");
-      const leden = parseInt(document.getElementById(`leden-${groep}`).value);
-      const maxPerLid = parseFloat(document.getElementById(`max-${groep}`).value);
-      const totaalCell = row.cells[1];
-      const maxCell = row.cells[2];
-
-      if (!isNaN(leden) && !isNaN(maxPerLid)) {
-        const maxToegestaan = leden * maxPerLid;
-        const totaal = parseFloat(totaalCell.textContent.replace("€", ""));
-        maxCell.textContent = `€${maxToegestaan.toFixed(2)}`;
-
-        if (totaal >= maxToegestaan) {
-          totaalCell.style.color = "red";
-          totaalCell.style.fontWeight = "bold";
-        } else if (totaal >= maxToegestaan * 0.9) {
-          totaalCell.style.color = "orange";
-          totaalCell.style.fontWeight = "bold";
-        } else {
-          totaalCell.style.color = "black";
-          totaalCell.style.fontWeight = "normal";
-        }
-      } else {
-        maxCell.textContent = "-";
-        totaalCell.style.color = "black";
-        totaalCell.style.fontWeight = "normal";
-      }
-    });
-  }
-}); // sluit DOMContentLoaded correct af
+      firebase.database().ref("
