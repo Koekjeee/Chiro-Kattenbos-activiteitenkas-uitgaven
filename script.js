@@ -198,7 +198,7 @@ if (u.bonUrl) {
     });
   }
 
-  document.getElementById("uitgaveForm").addEventListener("submit", e => {
+
 document.getElementById("uitgaveForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
@@ -260,6 +260,7 @@ document.getElementById("uitgaveForm").addEventListener("submit", async function
   document.getElementById("filterBetaald")
     .addEventListener("change", e => renderTabel(document.getElementById("filterGroep").value, e.target.value));
 });
+
 
 
 
