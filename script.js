@@ -114,8 +114,8 @@ document.addEventListener("DOMContentLoaded", function () {
     ]).then(([uitgavenSnap, instellingenSnap]) => {
       const uitgavenData = uitgavenSnap.val() || {};
       const instellingenData = instellingenSnap.val() || {};
-
       const totaalPerGroep = {};
+
       Object.values(uitgavenData).forEach(u => {
         const bedrag = parseFloat(u.bedrag);
         if (!totaalPerGroep[u.groep]) totaalPerGroep[u.groep] = 0;
@@ -187,21 +187,4 @@ document.addEventListener("DOMContentLoaded", function () {
         const totaal = parseFloat(totaalCell.textContent.replace("€", ""));
         maxCell.textContent = `€${maxToegestaan.toFixed(2)}`;
 
-        if (totaal >= maxToegestaan) {
-          totaalCell.style.color = "red";
-          totaalCell.style.fontWeight = "bold";
-        } else if (totaal >= maxToegestaan * 0.9) {
-          totaalCell.style.color = "orange";
-          totaalCell.style.fontWeight = "bold";
-        } else {
-          totaalCell.style.color = "black";
-          totaalCell.style.fontWeight = "normal";
-        }
-      } else {
-        maxCell.textContent = "-";
-        totaalCell.style.color = "black";
-        totaalCell.style.fontWeight = "normal";
-      }
-    });
-  }
-});
+        if (totaal >= maxTo
