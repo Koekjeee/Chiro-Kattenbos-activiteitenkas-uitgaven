@@ -179,3 +179,56 @@ td.betaald-toggle input[type="checkbox"] {
 }
 
 
+
+:root {
+  --bg-color: #f0f4f8;
+  --text-color: #333;
+  --panel-bg: #fff;
+  --table-header: #007bff;
+  --button-bg: #28a745;
+  --button-hover: #218838;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background 0.3s, color 0.3s;
+}
+
+form, .filter, #loginScherm, #summaryPanel, table {
+  background-color: var(--panel-bg);
+}
+
+th {
+  background-color: var(--table-header);
+  color: white;
+}
+
+button {
+  background-color: var(--button-bg);
+}
+button:hover {
+  background-color: var(--button-hover);
+}
+
+/* Donker thema */
+body.dark {
+  --bg-color: #1e1e1e;
+  --text-color: #e0e0e0;
+  --panel-bg: #2c2c2c;
+  --table-header: #444;
+  --button-bg: #444;
+  --button-hover: #666;
+}
+
+/* Thema-knop */
+.theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 70px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
