@@ -94,24 +94,11 @@ td.betaald-toggle input[type="checkbox"] {
   margin: 0;
 }
 
-#groepTabel th {
-  background-color: #343a40;
-  color: white;
-}
-
-#groepTabel td {
-  font-weight: bold;
-}
-
+/* Compactere groepentabel */
 #groepTabel td, #groepTabel th {
   padding: 6px 8px;
   font-size: 0.9em;
   line-height: 1.2;
-}
-
-#groepTabel {
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
 }
 
 #groepTabel th {
@@ -123,4 +110,3 @@ td.betaald-toggle input[type="checkbox"] {
 #groepTabel td {
   font-weight: 500;
 }
-
