@@ -101,8 +101,6 @@ document.addEventListener("DOMContentLoaded", function () {
   let overzichtZichtbaar = false;
 
   document.getElementById("toonOverzicht").addEventListener("click", function () {
-    if (document.getElementById("appInhoud").style.display !== "block") return;
-
     const overzichtDiv = document.getElementById("groepOverzicht");
     const instellingenDiv = document.getElementById("instellingenVelden");
 
@@ -195,11 +193,4 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!isNaN(leden) && !isNaN(maxPerLid)) {
         const maxToegestaan = leden * maxPerLid;
         const totaal = parseFloat(totaalCell.textContent.replace("€", ""));
-        maxCell.textContent = `€${maxToegestaan.toFixed(2)}`;
-
-        if (totaal >= maxToegestaan) {
-          totaalCell.style.color = "red";
-          totaalCell.style.fontWeight = "bold";
-        } else if (totaal >= maxToegestaan * 0.75) {
-          totaalCell.style.color = "orange";
-          totaalCell.style
+        maxCell.textContent = `€${max
