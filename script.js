@@ -16,6 +16,45 @@ document.addEventListener("DOMContentLoaded", function () {
     LEIDING: "#dddddd"
   };
 
+  // Toggle paneel en laad samenvatting
+  function setupSummaryToggle() {
+    const btn = document.getElementById("toggleSummary");
+    const content = document.getElementById("summaryContent");
+
+    btn.addEventListener("click", () => {
+      const open = content.style.display === "block";
+      content.style.display = open ? "none" : "block";
+      btn.textContent = (open ? "▸" : "▾") + " Toon uitgaven per groep";
+      if (!open) renderSamenvatting();
+    });
+  }
+
+  // Haal totalen op en render per groep
+  function renderSamenvatting() {
+    const lijst = document.getElementById("groepSamenvatting");
+    lijst.innerHTML = "";
+
+    const totals = {};
+    alleGroepen.forEach(g => totals[g] = 0);
+
+    firebase.database().ref("uitgaven").once("value", snapshot => {
+      const data = snapshot.val() || {};
+      Object.values(data).forEach(u => {
+        totals[u.groep] += parseFloat(u.bedrag);
+      });
+
+      alleGroepen.forEach(groep => {
+        const bedrag = totals[groep].toFixed(2);
+        const li = document.createElement("li");
+        li.textContent = groep;
+        const span = document.createElement("span");
+        span.textContent = `€${bedrag}`;
+        li.appendChild(span);
+        lijst.appendChild(li);
+      });
+    });
+  }
+
   function controleerWachtwoord() {
     const invoer = document.getElementById("wachtwoord").value;
     const foutmelding = document.getElementById("loginFout");
@@ -24,6 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("loginScherm").style.display = "none";
       document.getElementById("appInhoud").style.display = "block";
       foutmelding.textContent = "";
+      setupSummaryToggle();
       renderTabel();
     } else {
       foutmelding.textContent = "Wachtwoord is onjuist.";
@@ -77,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
           checkbox.checked = u.betaald;
           checkbox.title = "Betaald aanvinken";
           checkbox.onchange = () => {
-            firebase.database().ref("uitgaven/" + u.nummer).update({ betaald: checkbox.checked }, function (error) {
+            firebase.database().ref("uitgaven/" + u.nummer).update({ betaald: checkbox.checked }, error => {
               if (!error) {
                 renderTabel(
                   document.getElementById("filterGroep").value,
@@ -115,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function () {
       betaald
     };
 
-    firebase.database().ref("uitgaven/" + nummer).set(nieuweUitgave, function (error) {
+    firebase.database().ref("uitgaven/" + nummer).set(nieuweUitgave, error => {
       if (!error) {
         document.getElementById("uitgaveForm").reset();
         renderTabel(
