@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chiro Kattenbos – Leidingskas</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Firebase SDK (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-storage-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBQ7lu-1PDD28LWuW9vgHcELj2mlGzpE70",
+      authDomain: "chiroapp-c51eb.firebaseapp.com",
+      databaseURL: "https://chiroapp-c51eb-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "chiroapp-c51eb",
+      storageBucket: "chiroapp-c51eb.appspot.com",
+      messagingSenderId: "667256455082",
+      appId: "1:667256455082:web:e968feee1b636eab47b5d3"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+</head>
+<body>
+  <!-- Login -->
+  <div id="loginScherm">
+    <h2>Inloggen (Leidingskas)</h2>
+    <input type="password" id="wachtwoord" placeholder="Wachtwoord" />
+    <button id="loginKnop">Inloggen</button>
+    <p id="loginFout" aria-live="assertive" style="color: red;"></p>
+  </div>
+
+  <!-- App-inhoud -->
+  <main id="appInhoud" style="display: none;">
+    <h1>Leidingskas – Uitgavenbeheer</h1>
+
+    <!-- PDF-export -->
+    <button id="exportPdfBtn" class="pdf-export-btn" title="Exporteer leidingskas als PDF">📄</button>
+
+    <!-- Samenvatting totaal -->
+    <section id="summaryPanel">
+      <button id="toggleSummary" class="highlight-btn">▸ Toon totaal Leidingskas</button>
+      <div id="summaryContent">
+        <p>Totaal uitgaven: <span id="leidingTotaal">€0.00</span></p>
+      </div>
+    </section>
+
+    <!-- Uitgaveformulier (groep is vaste waarde) -->
+    <form id="uitgaveFormLeiding">
+      <input type="hidden" id="groep" value="LEIDING" />
+
+      <label for="bedrag">Bedrag (€):</label>
+      <input type="text" id="bedrag" required />
+
+      <label for="activiteit">Omschrijving:</label>
+      <input type="text" id="activiteit" required />
+
+      <label for="datum">Datum:</label>
+      <input type="date" id="datum" required />
+
+      <label>
+        <input type="checkbox" id="betaald" />
+        Betaald
+      </label>
+
+      <button type="submit">Toevoegen</button>
+    </form>
+
+    <!-- Filter betaald -->
+    <div class="filter">
+      <label for="filterBetaaldLeiding">Filter op betaald:</label>
+      <select id="filterBetaaldLeiding">
+        <option value="">Alles</option>
+        <option value="true">Betaald</option>
+        <option value="false">Niet betaald</option>
+      </select>
+    </div>
+
+    <!-- Overzicht tafel alleen LEIDING -->
+    <table id="overzichtLeiding">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Bedrag</th>
+          <th>Omschrijving</th>
+          <th>Datum</th>
+          <th>Betaald</th>
+          <th>Actie</th>
+          <th>Toggle betaald</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+
+  <!-- jsPDF voor export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="script-leidingskas.js"></script>
+</body>
+</html>
