@@ -29,63 +29,91 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Render per-groep overzicht met kleur
-function renderSamenvatting() {
-  const lijst   = document.getElementById("groepSamenvatting");
+// 1) Maak renderSamenvatting async
+async function renderSamenvatting() {
+  const lijst = document.getElementById("groepSamenvatting");
   lijst.innerHTML = "";
 
-  // 1) Bereken totals per groep
+  // 2) Haal uitgaven en leden op
+  const uitgavenSnap = await firebase.database().ref("uitgaven").once("value");
+  const ledenSnap   = await firebase.database().ref("groepLeden").once("value");
+  const uitgaven    = uitgavenSnap.val()   || {};
+  const ledenData   = ledenSnap.val()      || {};
+
+  // 3) Bereken totalen per groep
   const totals = {};
   alleGroepen.forEach(g => totals[g] = 0);
-  firebase.database().ref("uitgaven").once("value", snapshot => {
-    const data = snapshot.val() || {};
-    Object.values(data).forEach(u => {
-      totals[u.groep] += parseFloat(u.bedrag);
+  Object.values(uitgaven).forEach(u => {
+    totals[u.groep] += parseFloat(u.bedrag);
+  });
+
+  // 4) Bouw elk li-item
+  alleGroepen.forEach(groep => {
+    const totaal = totals[groep].toFixed(2);
+
+    const li = document.createElement("li");
+    li.style.backgroundColor = groepKleuren[groep] || "#fff";
+
+    // Groepsnaam + totaal
+    const naamSpan  = document.createElement("span");
+    naamSpan.textContent = groep;
+    const totaalSpan= document.createElement("span");
+    totaalSpan.textContent = `€${totaal}`;
+
+    // Input voor leden
+    const ledenInput = document.createElement("input");
+    ledenInput.type        = "number";
+    ledenInput.min         = "1";
+    ledenInput.placeholder = "Aantal leden";
+    ledenInput.style.width     = "80px";
+    ledenInput.style.marginLeft = "10px";
+    // Prefill met opgeslagen waarde
+    if (ledenData[groep]) ledenInput.value = ledenData[groep];
+
+    // Span voor € per persoon
+    const perPersoonSpan = document.createElement("span");
+    perPersoonSpan.style.marginLeft = "10px";
+    // Initieel tonen als al een waarde bestaat
+    if (ledenInput.value) {
+      const pp = (totals[groep] / parseInt(ledenInput.value)).toFixed(2);
+      perPersoonSpan.textContent = `€${pp} per persoon`;
+    }
+
+    // 5) Listener: bij wijziging opslaan en herberekenen
+    ledenInput.addEventListener("input", async () => {
+      const aantal = parseInt(ledenInput.value, 10);
+      if (aantal > 0) {
+        // opslaan
+        await firebase.database()
+          .ref(`groepLeden/${groep}`)
+          .set(aantal);
+
+        // herberekenen
+        const pp = (totals[groep] / aantal).toFixed(2);
+        perPersoonSpan.textContent = `€${pp} per persoon`;
+      } else {
+        perPersoonSpan.textContent = "";
+      }
     });
 
-    // 2) Voor elke groep: lijst-item, input en resultaat-span
-    alleGroepen.forEach(groep => {
-      const bedrag = totals[groep].toFixed(2);
+    // append alles
+    li.append(naamSpan, totaalSpan, ledenInput, perPersoonSpan);
+    lijst.appendChild(li);
+  });
+}
 
-      const li = document.createElement("li");
-      li.style.backgroundColor = groepKleuren[groep] || "#fff";
+// 6) Pas setupSummaryToggle aan om async te ondersteunen
+function setupSummaryToggle() {
+  const btn     = document.getElementById("toggleSummary");
+  const content = document.getElementById("summaryContent");
 
-      // Groepsnaam
-      const naamSpan = document.createElement("span");
-      naamSpan.textContent = groep;
-      li.appendChild(naamSpan);
-
-      // Totaalbedrag
-      const totaalSpan = document.createElement("span");
-      totaalSpan.textContent = `€${bedrag}`;
-      li.appendChild(totaalSpan);
-
-      // Aantal leden input
-      const ledenInput = document.createElement("input");
-      ledenInput.type        = "number";
-      ledenInput.min         = "1";
-      ledenInput.placeholder = "Aantal leden";
-      ledenInput.style.width     = "80px";
-      ledenInput.style.marginLeft = "10px";
-      li.appendChild(ledenInput);
-
-      // Per-persoon resultaat
-      const perPersoonSpan = document.createElement("span");
-      perPersoonSpan.style.marginLeft = "10px";
-      li.appendChild(perPersoonSpan);
-
-      // 3) Berekening bij input
-      ledenInput.addEventListener("input", () => {
-        const aantal = parseInt(ledenInput.value, 10);
-        if (!isNaN(aantal) && aantal > 0) {
-          const perPersoon = (totals[groep] / aantal).toFixed(2);
-          perPersoonSpan.textContent = `€${perPersoon} per persoon`;
-        } else {
-          perPersoonSpan.textContent = "";
-        }
-      });
-
-      lijst.appendChild(li);
-    });
+  btn.addEventListener("click", async () => {
+    const open = content.style.display === "block";
+    content.style.display = open ? "none" : "block";
+    btn.textContent = (open ? "▸" : "▾") + " Toon uitgaven per groep";
+    if (!open) {
+      await renderSamenvatting();
+    }
   });
 }
 
@@ -262,4 +290,5 @@ function renderSamenvatting() {
     );
 
 });  // sluit DOMContentLoaded af
+
 
