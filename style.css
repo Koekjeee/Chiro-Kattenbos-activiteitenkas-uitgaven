@@ -178,3 +178,17 @@ td.betaald-toggle input[type="checkbox"] {
 
 }
 
+/* Kleuren voor statuscel */
+td.status-veilig { background-color: #d4edda; }   /* groen */
+td.status-waarschuwing { background-color: #fff3cd; } /* oranje */
+td.status-over { background-color: #f8d7da; }     /* rood */
+
+/* Kleinere inputs in de tabel */
+#groepSamenvattingTable input {
+  width: 60px;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+
