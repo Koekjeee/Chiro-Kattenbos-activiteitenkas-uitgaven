@@ -1,4 +1,4 @@
-body {
+µbody {
   font-family: 'Segoe UI', sans-serif;
   margin: 0;
   padding: 20px;
@@ -177,27 +177,3 @@ td.betaald-toggle input[type="checkbox"] {
 }
 
 }
-
-/* Site-switcher rechtsboven, net naast de PDF-knop */
-#siteSwitcher {
-  position: absolute;
-  top: 22px;       /* iets lager om verticaal centraal naast de PDF-knop te staan */
-  right: 64px;     /* 36px (knopbreedte) + 20px (marge) + 8px (tussenruimte) */
-}
-
-#siteSelect {
-  width: 100px;          /* compact breedte */
-  padding: 4px 6px;      /* dunnere padding */
-  font-size: 12px;       /* kleinere tekst */
-  line-height: 1.2;      /* betere uitlijning */
-  border-radius: 3px;    
-  border: 1px solid #ccc;
-  background: #fff;
-  cursor: pointer;
-}
-
-#siteSelect:hover {
-  border-color: #007bff;
-}
-
-
