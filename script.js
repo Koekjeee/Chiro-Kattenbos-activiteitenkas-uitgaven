@@ -14,7 +14,12 @@ document.addEventListener("DOMContentLoaded", function () {
     Aspi: "#ffd5cc",
     LEIDING: "#dddddd"
   };
-  const storage = firebase.storage();
+
+  // NAVIGATIE: button die naar leidingskas.html navigeert
+  document.getElementById("gotoLeiding")
+    .addEventListener("click", () => {
+      window.location.href = "leidingskas.html";
+    });
 
   // Toggle paneel en laad samenvatting
   function setupSummaryToggle() {
@@ -98,10 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         (u.betaald ? "(Betaald)" : "(Niet betaald)");
           doc.text(regel, 25, y);
           y += 6;
-          if (y > 280) {
-            doc.addPage();
-            y = 20;
-          }
+          if (y > 280) { doc.addPage(); y = 20; }
         });
 
         y += 8;
@@ -126,7 +128,8 @@ document.addEventListener("DOMContentLoaded", function () {
       fout.textContent = "Wachtwoord is onjuist.";
     }
   }
-  document.getElementById("loginKnop").addEventListener("click", controleerWachtwoord);
+  document.getElementById("loginKnop")
+    .addEventListener("click", controleerWachtwoord);
 
   // Uitgaven in overzichtstabel
   function renderTabel(filterGroep = "", filterBetaald = "") {
@@ -170,13 +173,11 @@ document.addEventListener("DOMContentLoaded", function () {
           cb.checked = u.betaald;
           cb.onchange = () => {
             firebase.database().ref("uitgaven/" + u.nummer)
-              .update({ betaald: cb.checked }, err => {
-                if (!err) {
-                  renderTabel(
-                    document.getElementById("filterGroep").value,
-                    document.getElementById("filterBetaald").value
-                  );
-                }
+              .update({ betaald: cb.checked }, () => {
+                renderTabel(
+                  document.getElementById("filterGroep").value,
+                  document.getElementById("filterBetaald").value
+                );
               });
           };
           c7.appendChild(cb);
@@ -185,35 +186,38 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Nieuw uitgave toevoegen
-  document.getElementById("uitgaveForm").addEventListener("submit", e => {
-    e.preventDefault();
-    const g = document.getElementById("groep").value;
-    const b = parseFloat(document.getElementById("bedrag").value.replace(",", ".")) || 0;
-    const a = document.getElementById("activiteit").value;
-    const d = document.getElementById("datum").value;
-    const p = document.getElementById("betaald").checked;
-    if (!g || isNaN(b) || !a || !d) {
-      return alert("Gelieve alle velden correct in te vullen.");
-    }
-    const id = Date.now();
-    const obj = {
-      nummer: id,
-      groep: g,
-      bedrag: b.toFixed(2),
-      activiteit: a,
-      datum: d,
-      betaald: p
-    };
-    firebase.database().ref("uitgaven/" + id).set(obj, err => {
-      if (!err) {
-        document.getElementById("uitgaveForm").reset();
-        renderTabel(
-          document.getElementById("filterGroep").value,
-          document.getElementById("filterBetaald").value
-        );
+  document.getElementById("uitgaveForm")
+    .addEventListener("submit", e => {
+      e.preventDefault();
+      const g = document.getElementById("groep").value;
+      const b = parseFloat(
+        document.getElementById("bedrag").value.replace(",", ".")
+      ) || 0;
+      const a = document.getElementById("activiteit").value;
+      const d = document.getElementById("datum").value;
+      const p = document.getElementById("betaald").checked;
+      if (!g || isNaN(b) || !a || !d) {
+        return alert("Gelieve alle velden correct in te vullen.");
       }
+      const id = Date.now();
+      const obj = {
+        nummer: id,
+        groep: g,
+        bedrag: b.toFixed(2),
+        activiteit: a,
+        datum: d,
+        betaald: p
+      };
+      firebase.database().ref("uitgaven/" + id).set(obj, err => {
+        if (!err) {
+          document.getElementById("uitgaveForm").reset();
+          renderTabel(
+            document.getElementById("filterGroep").value,
+            document.getElementById("filterBetaald").value
+          );
+        }
+      });
     });
-  });  // ← Méér dan hier niks missen!
 
   // Filters
   document.getElementById("filterGroep")
@@ -223,7 +227,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   document.getElementById("filterBetaald")
     .addEventListener("change", e =>
-      renderTabel(document.getElementById("filterGroep").value, e.target.value)
+      renderTabel(
+        document.getElementById("filterGroep").value,
+        e.target.value
+      )
     );
-
-});  // sluit DOMContentLoaded af
+});
