@@ -231,7 +231,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // URL’s aanpassen naar jouw werkende routes
 const siteUrls = {
   activiteiten: "https://jouwdomein.be/activiteitenkas",
-  leidings:     "https://jouwdomein.be/leidingskas"
+  leidings:     "https://www.bol.com/be/nl/?Referrer=ADVBEGOO002003-WPH4BHZHJHYHS-698330543714-C-53918973&gad_source=1&gad_campaignid=53918973&gbraid=0AAAAAD5OnmNblu3_MlF_DkeZ-_rsatMFf&gclid=CjwKCAjw_fnFBhB0EiwAH_MfZjKcy0Nm2xDUAWGs-qN8t58kZtzOjNg0JFGGpVMLxe-1AKUcZtdrTBoCadcQAvD_BwEs"
 };
 
 document.getElementById("siteSelect")
@@ -240,4 +240,5 @@ document.getElementById("siteSelect")
     const url = siteUrls[key];
     if (url) window.location.href = url;
   });
+
 
