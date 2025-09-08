@@ -29,30 +29,65 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Render per-groep overzicht met kleur
-  function renderSamenvatting() {
-    const lijst = document.getElementById("groepSamenvatting");
-    lijst.innerHTML = "";
-    const totals = {};
-    alleGroepen.forEach(g => totals[g] = 0);
+function renderSamenvatting() {
+  const lijst   = document.getElementById("groepSamenvatting");
+  lijst.innerHTML = "";
 
-    firebase.database().ref("uitgaven").once("value", snapshot => {
-      const data = snapshot.val() || {};
-      Object.values(data).forEach(u => {
-        totals[u.groep] += parseFloat(u.bedrag);
-      });
-
-      alleGroepen.forEach(groep => {
-        const bedrag = totals[groep].toFixed(2);
-        const li = document.createElement("li");
-        li.style.backgroundColor = groepKleuren[groep] || "#fff";
-        li.textContent = groep;
-        const span = document.createElement("span");
-        span.textContent = `€${bedrag}`;
-        li.appendChild(span);
-        lijst.appendChild(li);
-      });
+  // 1) Bereken totals per groep
+  const totals = {};
+  alleGroepen.forEach(g => totals[g] = 0);
+  firebase.database().ref("uitgaven").once("value", snapshot => {
+    const data = snapshot.val() || {};
+    Object.values(data).forEach(u => {
+      totals[u.groep] += parseFloat(u.bedrag);
     });
-  }
+
+    // 2) Voor elke groep: lijst-item, input en resultaat-span
+    alleGroepen.forEach(groep => {
+      const bedrag = totals[groep].toFixed(2);
+
+      const li = document.createElement("li");
+      li.style.backgroundColor = groepKleuren[groep] || "#fff";
+
+      // Groepsnaam
+      const naamSpan = document.createElement("span");
+      naamSpan.textContent = groep;
+      li.appendChild(naamSpan);
+
+      // Totaalbedrag
+      const totaalSpan = document.createElement("span");
+      totaalSpan.textContent = `€${bedrag}`;
+      li.appendChild(totaalSpan);
+
+      // Aantal leden input
+      const ledenInput = document.createElement("input");
+      ledenInput.type        = "number";
+      ledenInput.min         = "1";
+      ledenInput.placeholder = "Aantal leden";
+      ledenInput.style.width     = "80px";
+      ledenInput.style.marginLeft = "10px";
+      li.appendChild(ledenInput);
+
+      // Per-persoon resultaat
+      const perPersoonSpan = document.createElement("span");
+      perPersoonSpan.style.marginLeft = "10px";
+      li.appendChild(perPersoonSpan);
+
+      // 3) Berekening bij input
+      ledenInput.addEventListener("input", () => {
+        const aantal = parseInt(ledenInput.value, 10);
+        if (!isNaN(aantal) && aantal > 0) {
+          const perPersoon = (totals[groep] / aantal).toFixed(2);
+          perPersoonSpan.textContent = `€${perPersoon} per persoon`;
+        } else {
+          perPersoonSpan.textContent = "";
+        }
+      });
+
+      lijst.appendChild(li);
+    });
+  });
+}
 
   // PDF-export setup
   function setupPdfExport() {
@@ -227,3 +262,4 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
 });  // sluit DOMContentLoaded af
+
