@@ -217,7 +217,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // URL’s aanpassen naar jouw werkende routes
 const siteUrls = {
-  activiteiten: "https://jouwdomein.be/activiteitenkas",
+  activiteiten: "https://koekjeee.github.io/Chiro-Kattenbos-activiteitenkas-uitgaven/",
   leidings:     "https://jouwdomein.be/leidingskas"
 };
 
@@ -240,4 +240,5 @@ document.getElementById("siteSelect")
     );
 
 });  // sluit DOMContentLoaded af
+
 
