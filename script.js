@@ -17,16 +17,18 @@ document.addEventListener("DOMContentLoaded", function () {
   const storage = firebase.storage();
 
   // Toggle paneel en laad samenvatting
-  function setupSummaryToggle() {
-    const btn = document.getElementById("toggleSummary");
-    const content = document.getElementById("summaryContent");
-    btn.addEventListener("click", () => {
-      const open = content.style.display === "block";
-      content.style.display = open ? "none" : "block";
-      btn.textContent = (open ? "▸" : "▾") + " Toon uitgaven per groep";
-      if (!open) renderSamenvatting();
-    });
-  }
+function setupSummaryToggle() {
+  const btn     = document.getElementById("toggleSummary");
+  const content = document.getElementById("summaryContent");
+  btn.addEventListener("click", async () => {
+    const open = content.style.display === "block";
+    content.style.display = open ? "none" : "block";
+    btn.textContent = (open ? "▸" : "▾") + " Toon uitgaven per groep";
+    if (!open) {
+      await renderSamenvatting();
+    }
+  });
+}
 
   // Render per-groep overzicht met kleur
 async function renderSamenvatting() {
@@ -318,6 +320,7 @@ function setupSummaryToggle() {
     );
 
 });  // sluit DOMContentLoaded af
+
 
 
 
