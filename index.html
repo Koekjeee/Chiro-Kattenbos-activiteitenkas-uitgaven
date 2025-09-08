@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chiro Kattenbos – Uitgavenbeheer</title>
+  <title>Chiro Kattenbos – Uitgavenbeheer - Activiteitenkas</title>
   <link rel="stylesheet" href="style.css" />
 
   <!-- Firebase SDK -->
@@ -23,35 +23,102 @@
   </script>
 </head>
 <body>
-  <!-- Globale navigatie -->
-  <nav class="main-nav">
-    <a href="index.html">Home</a>
-    <a href="leidingskas.html">Leidingskas</a>
-  </nav>
-
   <!-- 🔐 Login -->
   <div id="loginScherm">
     <h2>Inloggen</h2>
     <p>Voer het wachtwoord in om toegang te krijgen:</p>
     <input type="password" id="wachtwoord" placeholder="Wachtwoord" />
     <button id="loginKnop">Inloggen</button>
-    <p id="loginFout" aria-live="assertive" style="color: red;"></p>
+    <p id="loginFout" style="color: red;"></p>
   </div>
 
   <!-- 📋 App -->
   <div id="appInhoud" style="display: none;">
     <h1>Chiro Kattenbos – Uitgavenbeheer</h1>
 
-    <!-- Navigatiebutton naar Leidingskas -->
-    <button id="gotoLeiding" class="secondary-btn">
-      Naar Leidingskas
-    </button>
-
-    <!-- PDF-export knop -->
+    <!-- PDF-export knop (rechtsboven) -->
     <button id="exportPdfBtn" class="pdf-export-btn" title="Exporteer uitgaven als PDF">📄</button>
 
-    <!-- … rest van je bestaande markup … -->
-    <!-- Samenvatting, formulier, filters, tabel … -->
+    <!-- 📈 Samenvatting per groep -->
+    <div id="summaryPanel">
+      <button id="toggleSummary" class="highlight-btn">
+        ▸ Toon uitgaven per groep
+      </button>
+      <div id="summaryContent">
+        <ul id="groepSamenvatting"></ul>
+      </div>
+    </div>
+
+    <!-- ✅ Uitgaveformulier -->
+    <form id="uitgaveForm">
+      <label for="groep">Groep:</label>
+      <select id="groep" required>
+        <option value="">-- Kies een groep --</option>
+        <option>Ribbels</option>
+        <option>Speelclubs</option>
+        <option>Rakkers</option>
+        <option>Kwiks</option>
+        <option>Tippers</option>
+        <option>Toppers</option>
+        <option>Aspi</option>
+        <option>LEIDING</option>
+      </select>
+
+      <label for="bedrag">Bedrag (€):</label>
+      <input type="text" id="bedrag" required />
+
+      <label for="activiteit">Activiteit/Omschrijving:</label>
+      <input type="text" id="activiteit" required />
+
+      <label for="datum">Datum:</label>
+      <input type="date" id="datum" required />
+
+      
+      <label><input type="checkbox" id="betaald" /> Betaald</label>
+      <button type="submit">Toevoegen</button>
+    </form>
+
+    <!-- 🔍 Filters -->
+    <div class="filter">
+      <label for="filterGroep">Filter op groep:</label>
+      <select id="filterGroep">
+        <option value="">Alle groepen</option>
+        <option>Ribbels</option>
+        <option>Speelclubs</option>
+        <option>Rakkers</option>
+        <option>Kwiks</option>
+        <option>Tippers</option>
+        <option>Toppers</option>
+        <option>Aspi</option>
+        <option>LEIDING</option>
+      </select>
+    </div>
+
+    <div class="filter">
+      <label for="filterBetaald">Filter op betaald:</label>
+      <select id="filterBetaald">
+        <option value="">Alles</option>
+        <option value="true">Betaald</option>
+        <option value="false">Niet betaald</option>
+      </select>
+    </div>
+
+    <!-- 📊 Tabel -->
+    <table id="overzicht">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Groep</th>
+          <th>Bedrag</th>
+          <th>Activiteit</th>
+          <th>Datum</th>
+          <th>Betaald</th>
+          <th>Actie</th>
+          <th>Betaald aanvinken</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 
   <!-- jsPDF voor PDF-export -->
@@ -60,3 +127,5 @@
   <script src="script.js"></script>
 </body>
 </html>
+
+
