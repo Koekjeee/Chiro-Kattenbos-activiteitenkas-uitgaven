@@ -177,3 +177,24 @@ td.betaald-toggle input[type="checkbox"] {
 }
 
 }
+
+/* Site-switcher rechtsboven, net naast de PDF-knop */
+#siteSwitcher {
+  position: absolute;
+  top: 20px;
+  right: 70px; /* schuift net links van de PDF-knop */
+}
+
+#siteSelect {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+#siteSelect:hover {
+  border-color: #007bff;
+}
+
