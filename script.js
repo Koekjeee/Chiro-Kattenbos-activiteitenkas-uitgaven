@@ -17,135 +17,42 @@ document.addEventListener("DOMContentLoaded", function () {
   const storage = firebase.storage();
 
   // Toggle paneel en laad samenvatting
-function setupSummaryToggle() {
-  const btn     = document.getElementById("toggleSummary");
-  const content = document.getElementById("summaryContent");
-  btn.addEventListener("click", async () => {
-    const open = content.style.display === "block";
-    content.style.display = open ? "none" : "block";
-    btn.textContent = (open ? "▸" : "▾") + " Toon uitgaven per groep";
-    if (!open) {
-      await renderSamenvatting();
-    }
-  });
-}
+  function setupSummaryToggle() {
+    const btn = document.getElementById("toggleSummary");
+    const content = document.getElementById("summaryContent");
+    btn.addEventListener("click", () => {
+      const open = content.style.display === "block";
+      content.style.display = open ? "none" : "block";
+      btn.textContent = (open ? "▸" : "▾") + " Toon uitgaven per groep";
+      if (!open) renderSamenvatting();
+    });
+  }
 
   // Render per-groep overzicht met kleur
-async function renderSamenvatting() {
-  const tbody       = document.querySelector("#groepSamenvattingTable tbody");
-  tbody.innerHTML   = "";
+  function renderSamenvatting() {
+    const lijst = document.getElementById("groepSamenvatting");
+    lijst.innerHTML = "";
+    const totals = {};
+    alleGroepen.forEach(g => totals[g] = 0);
 
-  // 1) Ophalen data
-  const [uitgSnap, ledenSnap, maxPerLidSnap] = await Promise.all([
-    firebase.database().ref("uitgaven").once("value"),
-    firebase.database().ref("groepLeden").once("value"),
-    firebase.database().ref("groepMaxPerLid").once("value")
-  ]);
-  const uitgaven     = uitgSnap.val()        || {};
-  const ledenData    = ledenSnap.val()       || {};
-  const maxPerLidData= maxPerLidSnap.val()   || {};
+    firebase.database().ref("uitgaven").once("value", snapshot => {
+      const data = snapshot.val() || {};
+      Object.values(data).forEach(u => {
+        totals[u.groep] += parseFloat(u.bedrag);
+      });
 
-  // 2) Bereken totaal per groep
-  const totals = {};
-  alleGroepen.forEach(g => totals[g] = 0);
-  Object.values(uitgaven).forEach(u => {
-    totals[u.groep] += parseFloat(u.bedrag);
-  });
-
-  // 3) Rijen bouwen
-  alleGroepen.forEach(groep => {
-    const tr = document.createElement("tr");
-
-    // Cel: groepnaam
-    const tdGroep = document.createElement("td");
-    tdGroep.textContent = groep;
-    tr.append(tdGroep);
-
-    // Cel: aantal leden (input)
-    const tdLeden = document.createElement("td");
-    const inpLeden= document.createElement("input");
-    inpLeden.type        = "number";
-    inpLeden.min         = "1";
-    inpLeden.value       = ledenData[groep] || "";
-    inpLeden.addEventListener("input", () => updateAndRecalc(groep));
-    tdLeden.append(inpLeden);
-    tr.append(tdLeden);
-
-    // Cel: max € per lid (input)
-    const tdMaxPer = document.createElement("td");
-    const inpMax   = document.createElement("input");
-    inpMax.type        = "number";
-    inpMax.min         = "0";
-    inpMax.step        = "0.01";
-    inpMax.value       = maxPerLidData[groep] || "";
-    inpMax.addEventListener("input", () => updateAndRecalc(groep));
-    tdMaxPer.append(inpMax);
-    tr.append(tdMaxPer);
-
-    // Cel: totaal uitgaven
-    const tdTotaal = document.createElement("td");
-    tdTotaal.textContent = `€${totals[groep].toFixed(2)}`;
-    tr.append(tdTotaal);
-
-    // Cel: max totaal (leden × maxPerLid)
-    const tdMaxTotaal = document.createElement("td");
-    tr.append(tdMaxTotaal);
-
-    // Functie om te updaten en statuskleur te geven
-    async function updateAndRecalc(g) {
-      const leden     = parseInt(inpLeden.value, 10)     || 0;
-      const maxPer   = parseFloat(inpMax.value)         || 0;
-
-      // Sla beide waarden op
-      await Promise.all([
-        firebase.database().ref(`groepLeden/${g}`).set(leden),
-        firebase.database().ref(`groepMaxPerLid/${g}`).set(maxPer)
-      ]);
-
-      // Bereken nieuw max totaal
-      const nieuwMaxTotaal = leden * maxPer;
-      tdMaxTotaal.textContent = `€${nieuwMaxTotaal.toFixed(2)}`;
-
-      // Kleurcode op basis van ratio uitgaven / maxTotaal
-      const ratio = nieuwMaxTotaal > 0
-        ? totals[g] / nieuwMaxTotaal
-        : 0;
-      tdTotaal.classList.remove("status-veilig", "status-waarschuwing", "status-over");
-      if (ratio >= 1) {
-        tdTotaal.classList.add("status-over");
-      } else if (ratio >= 0.7) {
-        tdTotaal.classList.add("status-waarschuwing");
-      } else {
-        tdTotaal.classList.add("status-veilig");
-      }
-    }
-
-    // Initialiseren van de berekening & kleur bij laden als er waarden bestaan
-    updateAndRecalc(groep);
-
-    tbody.append(tr);
-  });
-}
-    // append alles
-    li.append(naamSpan, totaalSpan, ledenInput, perPersoonSpan);
-    lijst.appendChild(li);
-  });
-}
-
-// 6) Pas setupSummaryToggle aan om async te ondersteunen
-function setupSummaryToggle() {
-  const btn     = document.getElementById("toggleSummary");
-  const content = document.getElementById("summaryContent");
-
-  btn.addEventListener("click", async () => {
-    const open = content.style.display === "block";
-    content.style.display = open ? "none" : "block";
-    btn.textContent = (open ? "▸" : "▾") + " Toon uitgaven per groep";
-    if (!open) {
-      await renderSamenvatting();
-    }
-  });
-}
+      alleGroepen.forEach(groep => {
+        const bedrag = totals[groep].toFixed(2);
+        const li = document.createElement("li");
+        li.style.backgroundColor = groepKleuren[groep] || "#fff";
+        li.textContent = groep;
+        const span = document.createElement("span");
+        span.textContent = `€${bedrag}`;
+        li.appendChild(span);
+        lijst.appendChild(li);
+      });
+    });
+  }
 
   // PDF-export setup
   function setupPdfExport() {
@@ -320,7 +227,3 @@ function setupSummaryToggle() {
     );
 
 });  // sluit DOMContentLoaded af
-
-
-
-
