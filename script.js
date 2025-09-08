@@ -29,73 +29,101 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Render per-groep overzicht met kleur
-// 1) Maak renderSamenvatting async
 async function renderSamenvatting() {
-  const lijst = document.getElementById("groepSamenvatting");
-  lijst.innerHTML = "";
+  const tbody       = document.querySelector("#groepSamenvattingTable tbody");
+  tbody.innerHTML   = "";
 
-  // 2) Haal uitgaven en leden op
-  const uitgavenSnap = await firebase.database().ref("uitgaven").once("value");
-  const ledenSnap   = await firebase.database().ref("groepLeden").once("value");
-  const uitgaven    = uitgavenSnap.val()   || {};
-  const ledenData   = ledenSnap.val()      || {};
+  // 1) Ophalen data
+  const [uitgSnap, ledenSnap, maxPerLidSnap] = await Promise.all([
+    firebase.database().ref("uitgaven").once("value"),
+    firebase.database().ref("groepLeden").once("value"),
+    firebase.database().ref("groepMaxPerLid").once("value")
+  ]);
+  const uitgaven     = uitgSnap.val()        || {};
+  const ledenData    = ledenSnap.val()       || {};
+  const maxPerLidData= maxPerLidSnap.val()   || {};
 
-  // 3) Bereken totalen per groep
+  // 2) Bereken totaal per groep
   const totals = {};
   alleGroepen.forEach(g => totals[g] = 0);
   Object.values(uitgaven).forEach(u => {
     totals[u.groep] += parseFloat(u.bedrag);
   });
 
-  // 4) Bouw elk li-item
+  // 3) Rijen bouwen
   alleGroepen.forEach(groep => {
-    const totaal = totals[groep].toFixed(2);
+    const tr = document.createElement("tr");
 
-    const li = document.createElement("li");
-    li.style.backgroundColor = groepKleuren[groep] || "#fff";
+    // Cel: groepnaam
+    const tdGroep = document.createElement("td");
+    tdGroep.textContent = groep;
+    tr.append(tdGroep);
 
-    // Groepsnaam + totaal
-    const naamSpan  = document.createElement("span");
-    naamSpan.textContent = groep;
-    const totaalSpan= document.createElement("span");
-    totaalSpan.textContent = `€${totaal}`;
+    // Cel: aantal leden (input)
+    const tdLeden = document.createElement("td");
+    const inpLeden= document.createElement("input");
+    inpLeden.type        = "number";
+    inpLeden.min         = "1";
+    inpLeden.value       = ledenData[groep] || "";
+    inpLeden.addEventListener("input", () => updateAndRecalc(groep));
+    tdLeden.append(inpLeden);
+    tr.append(tdLeden);
 
-    // Input voor leden
-    const ledenInput = document.createElement("input");
-    ledenInput.type        = "number";
-    ledenInput.min         = "1";
-    ledenInput.placeholder = "Aantal leden";
-    ledenInput.style.width     = "80px";
-    ledenInput.style.marginLeft = "10px";
-    // Prefill met opgeslagen waarde
-    if (ledenData[groep]) ledenInput.value = ledenData[groep];
+    // Cel: max € per lid (input)
+    const tdMaxPer = document.createElement("td");
+    const inpMax   = document.createElement("input");
+    inpMax.type        = "number";
+    inpMax.min         = "0";
+    inpMax.step        = "0.01";
+    inpMax.value       = maxPerLidData[groep] || "";
+    inpMax.addEventListener("input", () => updateAndRecalc(groep));
+    tdMaxPer.append(inpMax);
+    tr.append(tdMaxPer);
 
-    // Span voor € per persoon
-    const perPersoonSpan = document.createElement("span");
-    perPersoonSpan.style.marginLeft = "10px";
-    // Initieel tonen als al een waarde bestaat
-    if (ledenInput.value) {
-      const pp = (totals[groep] / parseInt(ledenInput.value)).toFixed(2);
-      perPersoonSpan.textContent = `€${pp} per persoon`;
+    // Cel: totaal uitgaven
+    const tdTotaal = document.createElement("td");
+    tdTotaal.textContent = `€${totals[groep].toFixed(2)}`;
+    tr.append(tdTotaal);
+
+    // Cel: max totaal (leden × maxPerLid)
+    const tdMaxTotaal = document.createElement("td");
+    tr.append(tdMaxTotaal);
+
+    // Functie om te updaten en statuskleur te geven
+    async function updateAndRecalc(g) {
+      const leden     = parseInt(inpLeden.value, 10)     || 0;
+      const maxPer   = parseFloat(inpMax.value)         || 0;
+
+      // Sla beide waarden op
+      await Promise.all([
+        firebase.database().ref(`groepLeden/${g}`).set(leden),
+        firebase.database().ref(`groepMaxPerLid/${g}`).set(maxPer)
+      ]);
+
+      // Bereken nieuw max totaal
+      const nieuwMaxTotaal = leden * maxPer;
+      tdMaxTotaal.textContent = `€${nieuwMaxTotaal.toFixed(2)}`;
+
+      // Kleurcode op basis van ratio uitgaven / maxTotaal
+      const ratio = nieuwMaxTotaal > 0
+        ? totals[g] / nieuwMaxTotaal
+        : 0;
+      tdTotaal.classList.remove("status-veilig", "status-waarschuwing", "status-over");
+      if (ratio >= 1) {
+        tdTotaal.classList.add("status-over");
+      } else if (ratio >= 0.7) {
+        tdTotaal.classList.add("status-waarschuwing");
+      } else {
+        tdTotaal.classList.add("status-veilig");
+      }
     }
 
-    // 5) Listener: bij wijziging opslaan en herberekenen
-    ledenInput.addEventListener("input", async () => {
-      const aantal = parseInt(ledenInput.value, 10);
-      if (aantal > 0) {
-        // opslaan
-        await firebase.database()
-          .ref(`groepLeden/${groep}`)
-          .set(aantal);
+    // Initialiseren van de berekening & kleur bij laden als er waarden bestaan
+    updateAndRecalc(groep);
 
-        // herberekenen
-        const pp = (totals[groep] / aantal).toFixed(2);
-        perPersoonSpan.textContent = `€${pp} per persoon`;
-      } else {
-        perPersoonSpan.textContent = "";
-      }
-    });
-
+    tbody.append(tr);
+  });
+}
     // append alles
     li.append(naamSpan, totaalSpan, ledenInput, perPersoonSpan);
     lijst.appendChild(li);
@@ -290,5 +318,6 @@ function setupSummaryToggle() {
     );
 
 });  // sluit DOMContentLoaded af
+
 
 
