@@ -214,19 +214,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });  // ← Méér dan hier niks missen!
-
-  // URL’s aanpassen naar jouw werkende routes
-const siteUrls = {
-  activiteiten: "https://koekjeee.github.io/Chiro-Kattenbos-activiteitenkas-uitgaven/",
-  leidings:     "https://jouwdomein.be/leidingskas"
-};
-
-document.getElementById("siteSelect")
-  .addEventListener("change", e => {
-    const key = e.target.value;
-    const url = siteUrls[key];
-    if (url) window.location.href = url;
-  });
   
   // Filters
   document.getElementById("filterGroep")
@@ -241,4 +228,16 @@ document.getElementById("siteSelect")
 
 });  // sluit DOMContentLoaded af
 
+// URL’s aanpassen naar jouw werkende routes
+const siteUrls = {
+  activiteiten: "https://jouwdomein.be/activiteitenkas",
+  leidings:     "https://jouwdomein.be/leidingskas"
+};
+
+document.getElementById("siteSelect")
+  .addEventListener("change", e => {
+    const key = e.target.value;
+    const url = siteUrls[key];
+    if (url) window.location.href = url;
+  });
 
