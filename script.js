@@ -214,7 +214,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });  // ← Méér dan hier niks missen!
-  
+
   // Filters
   document.getElementById("filterGroep")
     .addEventListener("change", e =>
@@ -227,19 +227,3 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
 });  // sluit DOMContentLoaded af
-
-// URL’s aanpassen naar jouw werkende routes
-const siteUrls = {
-  activiteiten: "https://jouwdomein.be/activiteitenkas",
-  leidings:     "https://www.bol.com/be/nl/"
-};
-
-document.getElementById("siteSelect")
-  .addEventListener("change", e => {
-    const key = e.target.value;
-    const url = siteUrls[key];
-    if (url) window.location.href = url;
-  });
-
-
-
