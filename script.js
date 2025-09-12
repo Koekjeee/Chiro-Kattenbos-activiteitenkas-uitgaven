@@ -1,5 +1,9 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const correctWachtwoord = "chiro2025";
+document.addEventListener("DOMContentLoaded", () => {
+  function setupSummaryToggle() {
+  const btn = document.getElementById("toggleSummary");
+  const summary = document.getElementById("summaryContent");
+  if (!btn || !summary) return;
+
   const alleGroepen = [
     "Ribbels", "Speelclubs", "Rakkers", "Kwiks",
     "Tippers", "Toppers", "Aspi", "LEIDING"
@@ -243,4 +247,5 @@ document.addEventListener("DOMContentLoaded", function () {
       renderTabel(document.getElementById("filterGroep").value, e.target.value)
     );
 });
+
 
