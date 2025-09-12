@@ -133,26 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Login logic
-  function controleerWachtwoord() {
-    const invoer = document.getElementById("wachtwoord").value;
-    const fout   = document.getElementById("loginFout");
 
-    if (invoer === correctWachtwoord) {
-      document.getElementById("loginScherm").style.display = "none";
-      document.getElementById("appInhoud").style.display   = "block";
-      fout.textContent = "";
-
-      setupSummaryToggle();
-      setupPdfExport();
-      renderTabel();
-    } else {
-      fout.textContent = "Wachtwoord is onjuist.";
-    }
-  }
-
-  document.getElementById("loginKnop")
-    .addEventListener("click", controleerWachtwoord);
 
   // Uitgaven in overzichtstabel tonen
   function renderTabel(filterGroep = "", filterBetaald = "") {
@@ -262,3 +243,4 @@ document.addEventListener("DOMContentLoaded", function () {
       renderTabel(document.getElementById("filterGroep").value, e.target.value)
     );
 });
+
